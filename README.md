@@ -282,5 +282,5 @@ Licensed under GNU GENERAL PUBLIC LICENSE.
 
 Copyright (C) 2020 Callum Rimmer <callum@deadtrendy.co.uk>
 
-[testfile]: https://github.com/caljrimmer/1liner/__tests__/index.spec.js
-[twitter]: http://twitter.com/caljrimmre
+[testfile]: https://github.com/caljrimmer/1liner/blob/master/__tests__/index.spec.js
+[twitter]: http://twitter.com/caljrimmer
