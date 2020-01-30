@@ -1,9 +1,9 @@
-1Liner - Query JSON with one tiny line of code
-=========
+1Liner
+=======
 
 [![build status](https://secure.travis-ci.org/caljrimmer/1liner.png)](https://travis-ci.com/caljrimmer/1liner)
 
-`1Liner`, or simply `L` is a super fast and lightweight (**< 35 kb** minified and gzipped) JavaScript library for the browser or for Node.js that provides allows querying of JSON with one tiny line of code
+**1Liner**, or simply **L** is a super fast (10000 query executions take 150ms) and lightweight (**< 35 kb** minified) JavaScript library for the browser or for Node.js that provides allows querying of JSON with one tiny line of code.
 
 Why?
 ----
