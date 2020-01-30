@@ -1,8 +1,7 @@
 1Liner - Query JSON with one tiny line of code
 =========
 
-[![build status](https://secure.travis-ci.org/jprichardson/string.js.png)](http://travis-ci.org/jprichardson/string.js)
-[![CDNJS](https://img.shields.io/cdnjs/v/string.js.svg)](https://cdnjs.com/libraries/string.js)
+[![build status](https://secure.travis-ci.org/caljrimmer/1liner.png)](https://travis-ci.com/caljrimmer/1liner)
 
 `1Liner`, or simply `L` is a super fast and lightweight (**< 35 kb** minified and gzipped) JavaScript library for the browser or for Node.js that provides allows querying of JSON with one tiny line of code
 
@@ -106,16 +105,6 @@ obj.query('proposer.age') - 10; // 23
 ```
 
 A global variable `window.L` or simply `L` is created.
-
-
-### AMD Support
-
-It now [has AMD support](https://github.com/jprichardson/string.js/pull/20). See [require.js](http://requirejs.org/) on how to use with AMD modules.
-
-
-### Browser Compatibility
-
-`1Liner` has been designed to be compatible with Node.js and with IE6+, Firefox 3+, Safari 2+, Chrome 3+. Please [click here][browsertest] to run the tests in your browser.
 
 Operators
 -------
