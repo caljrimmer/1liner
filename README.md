@@ -14,25 +14,25 @@ Fetching data from a JS object can be cumbersome and always requires too much co
 ```javascript
 const L = require('1liner');
 const obj = new L({
-    "proposer": {
-        "address": {
-            "line_1": "39944 Morissette Trail",
-            "line_2": "Gulgowski Wells",
-            "postcode": "AB13RT",
-            "county": "Gloucestershire",
-            "country": "GB"
+    propose: {
+        address: {
+            line_1: "39944 Morissette Trail",
+            line_2: "Gulgowski Wells",
+            postcode: "AB13RT",
+            county: "Gloucestershire",
+            country: "GB"
         },
-        "convictions": [{
-            "code": "SP50",
-            "points": 4,
-        },
-        {
-            "code": "SP50",
-            "points": 2,
+        convictions: [{
+            code: "SP50",
+            points: 4,
         },
         {
-            "code": "SP30",
-            "points": 1,
+            code: "SP50",
+            points: 2,
+        },
+        {
+            code: "SP30",
+            points: 1,
         }]
     }
 });
