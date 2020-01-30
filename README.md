@@ -8,7 +8,7 @@
 Why?
 ----
 
-Fetching data from a JS object can be cumbersome and always requires too much code. Wouldn't it be great to be able to fetch data, quickly, from a JS object such with one simple line?
+Fetching data from a JS object can be cumbersome and always requires too much code. Wouldn't it be great to be able to fetch data, quickly, from a JS object with one simple line?
 
 
 ```javascript
