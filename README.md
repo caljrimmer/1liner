@@ -8,61 +8,38 @@
 Why?
 ----
 
-Fetching data from a JS object can be cumbersome and always requires too much code. Wouldn't it be great to be able to fetch data from an JSON or JS object such with one simple line?
+Fetching data from a JS object can be cumbersome and always requires too much code. Wouldn't it be great to be able to fetch data, quickly, from a JS object such with one simple line?
 
-Take the following JS object:
 
-```
-{
+```javascript
+const L = require('1liner');
+const obj = new L({
     "proposer": {
-    "title": "MR",
-    "first_names": "Toadie",
-    "last_names": "Ezakeeper",
-    "age": 33,
-    "address": {
-        "line_1": "39944 Morissette Trail",
-        "line_2": "Gulgowski Wells",
-        "postcode": "AB13RT",
-        "county": "Gloucestershire",
-        "country": "GB"
-    },
-    "convictions": [{
-        "code": "SP50",
-        "points": 4,
-    },
-    {
-        "code": "SP50",
-        "points": 2,
-    },
-    {
-        "code": "SP30",
-        "points": 1,
-    }],
-    "claims": [{
-        "code": "A",
-        "at_fault": false,
-    }]
-}
-```
+        "address": {
+            "line_1": "39944 Morissette Trail",
+            "line_2": "Gulgowski Wells",
+            "postcode": "AB13RT",
+            "county": "Gloucestershire",
+            "country": "GB"
+        },
+        "convictions": [{
+            "code": "SP50",
+            "points": 4,
+        },
+        {
+            "code": "SP50",
+            "points": 2,
+        },
+        {
+            "code": "SP30",
+            "points": 1,
+        }]
+    }
+});
 
-1Liner allows you to get data from JSON quickly and easily:
-
-```
-proposer.address.postcode // "AB13RT" 
-proposer.convictions.map(code) // ["SP50", "SP50", "SP30"]
-proposer.convictions.count() // 3
-proposer.convictions.min(points) // 1
-proposer.convictions.max(points) // 4
-proposer.convictions.range() // 3
-proposer.convictions.mean() //2.33
-proposer.convictions.filter(code=SP30) // ["SP30"]
-proposer.convictions.filter(code!=SP30) // ["SP50", "SP50"]
-proposer.convictions.filter(points>0).map(code) // ["SP50", "SP50"]
-proposer.convictions.filter(points>=0).map(code) // ["SP50", "SP50", "SP30"]
-proposer.convictions.filter(points<2).map(code) // ["SP30"]
-proposer.convictions.filter(points<=2).map(code) // ["SP50", "SP30"]
-proposer.convictions.filter(points<=2).filter(code=SP30).map(code) // ["SP30"]
-
+obj.query('proposer.address.postcode'); // "AB13RT" 
+obj.query('proposer.convictions.map(code)'); // ["SP50", "SP50", "SP30"]
+obj.query('proposer.convictions.filter(points<=2).filter(code=SP30).map(code)'); // ["SP30"]
 ```
 
 Installation
@@ -239,7 +216,6 @@ obj.query('proposer.convictions.filter(points>2).map(code)'); // ["SP50"]
 obj.query('proposer.convictions.filter(points>=2).map(code)'); // ["SP50", "SP30"]
 ```
 
-
 Testing
 -------
 
@@ -257,6 +233,11 @@ Run test package:
 
     $ npm test
 
+Speed
+-------
+
++ Small Object (2.5KB) - 10000 query executions takes *150ms*
++ Large Object (2.5MB) - 1000 query executions takes *1094ms*
 
 Contributions
 -------------
