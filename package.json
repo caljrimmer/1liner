@@ -1,0 +1,39 @@
+{
+  "name": "1liner",
+  "version": "1.0.0",
+  "description": "Query JSON with one line of code.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caljrimmer/1liner.git"
+  },
+  "keywords": [
+    "JSON",
+    "1Liner",
+    "JSON Query",
+    "L"
+  ],
+  "author": "Callum Rimmer",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/caljrimmer/1liner/issues"
+  },
+  "homepage": "https://github.com/caljrimmer/1liner#readme",
+  "dependencies": {
+    "lodash.flatten": "^4.4.0",
+    "lodash.get": "^4.4.2",
+    "lodash.isarray": "^4.0.0",
+    "lodash.isundefined": "^3.0.1",
+    "lodash.max": "^4.0.1",
+    "lodash.meanby": "^4.10.0",
+    "lodash.min": "^4.0.1",
+    "lodash.round": "^4.0.4",
+    "lodash.sumby": "^4.6.0"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0"
+  }
+}
