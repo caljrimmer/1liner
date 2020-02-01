@@ -278,8 +278,8 @@ Alternative packages
 
 The following packages allow more sophisticated querying of JSON.
 
-+ [JSONPath][https://github.com/json-path/JsonPath]
-+ [JMESPath][jmehttps://github.com/jmespath/jmespath.jsspath]
++ [JSONPath](https://github.com/json-path/JsonPath)
++ [JMESPath](jmehttps://github.com/jmespath/jmespath.jsspath)
 
 License
 -------
