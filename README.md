@@ -2,6 +2,9 @@
 =======
 
 [![build status](https://secure.travis-ci.org/caljrimmer/1liner.png)](https://travis-ci.com/caljrimmer/1liner)
+[![downloads](https://img.shields.io/github/package-json/v/caljrimmer/1liner)](https://www.npmjs.com/package/1liner)
+
+
 
 **1Liner**, or simply **L** is a super fast (10000 query executions take 150ms) and lightweight (**< 35 kb** minified) JavaScript library for the browser or for Node.js that allows querying of JSON with one tiny line of code.
 
