@@ -14,7 +14,9 @@
     "JSON",
     "1Liner",
     "JSON Query",
-    "L"
+    "JS Object Query",
+    "L",
+    "JsonPath"
   ],
   "author": "Callum Rimmer",
   "license": "GPL-3.0",
