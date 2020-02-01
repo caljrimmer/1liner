@@ -3,12 +3,12 @@
 
 [![build status](https://secure.travis-ci.org/caljrimmer/1liner.png)](https://travis-ci.com/caljrimmer/1liner)
 
-**1Liner**, or simply **L** is a super fast (10000 query executions take 150ms) and lightweight (**< 35 kb** minified) JavaScript library for the browser or for Node.js that provides allows querying of JSON with one tiny line of code.
+**1Liner**, or simply **L** is a super fast (10000 query executions take 150ms) and lightweight (**< 35 kb** minified) JavaScript library for the browser or for Node.js that allows querying of JSON with one tiny line of code.
 
 Why?
 ----
 
-Fetching data from a JS object can be cumbersome and always requires too much code. Wouldn't it be great to be able to fetch data, quickly, from a JS object with one simple line?
+Fetching data from a JSON can be cumbersome and always requires too much code. Wouldn't it be great to be able to fetch data, quickly, from a JSON with one simple line?
 
 
 ```javascript
@@ -216,6 +216,35 @@ obj.query('proposer.convictions.filter(points>2).map(code)'); // ["SP50"]
 obj.query('proposer.convictions.filter(points>=2).map(code)'); // ["SP50", "SP30"]
 ```
 
+### - unique
+
+Returns an array of the unique items.
+
+Example:
+
+```javascript
+const L = require('1liner');
+
+const obj = new L({
+    proposer: {
+        title: "MR",
+        first_names: "Toadie",
+        last_names: "Ezakeeper",
+        age: 33,
+        convictions: [{
+            code: "SP50",
+            points: 4
+        },
+        {
+            code: "SP50",
+            points: 2
+        }]
+    }    
+});
+
+obj.query('proposer.convictions.unique(code).count()'); // 1
+```
+
 Testing
 -------
 
@@ -244,6 +273,13 @@ Contributions
 
 If you contribute to this library, just modify `index.js`, `index.spec.js`, and update `README.md`. I'll update the website docs and generate the new `dist/index.js`, changelog and version.
 
+Alternative packages
+-------------
+
+The following packages allow more sophisticated querying of JSON.
+
++ [JSONPath][https://github.com/json-path/JsonPath]
++ [JMESPath][jmehttps://github.com/jmespath/jmespath.jsspath]
 
 License
 -------

@@ -1,6 +1,6 @@
 {
   "name": "1liner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Query JSON with one line of code.",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,11 @@
     "JSON Query",
     "JS Object Query",
     "L",
-    "JsonPath"
+    "JsonPath",
+    "JSONPath",
+    "JMESPath",
+    "jmespath",
+    "traversal"
   ],
   "author": "Callum Rimmer",
   "license": "GPL-3.0",
@@ -33,7 +37,8 @@
     "lodash.meanby": "^4.10.0",
     "lodash.min": "^4.0.1",
     "lodash.round": "^4.0.4",
-    "lodash.sumby": "^4.6.0"
+    "lodash.sumby": "^4.6.0",
+    "lodash.uniqby": "^4.7.0"
   },
   "devDependencies": {
     "jest": "^25.1.0"

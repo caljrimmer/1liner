@@ -16,6 +16,7 @@ const max = require('lodash.max');
 const meanBy = require('lodash.meanby');
 const sumBy = require('lodash.sumby');
 const isUndefined = require('lodash.isundefined');
+const unique = require('lodash.uniqby');
 
 /**
  * Define equators
@@ -43,6 +44,7 @@ const operators = [
     'min',
     'max',
     'range',
+    'unique'
 ];
 
 /**
@@ -105,6 +107,11 @@ function __recursive(obj, el, nextEl, segment) {
         } else {
             return newObj.filter(o => o[key] == value);
         }
+    }
+
+    if (nextEl.includes('unique(')) {
+        const key =__getOperatorValue(nextEl, segment);
+        return unique(newObj, key);
     }
 
     if (nextEl.includes('map(')) {
