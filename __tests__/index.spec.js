@@ -117,7 +117,12 @@ describe('1Liner', () => {
             expect(result).toEqual(['W'])
         });
 
-        it.only('PASS - unique =', async () => {
+        it('PASS - filter =', async () => {
+            const result = L.query('additional_drivers.filter(medical_informed_dvla=true).count()');
+            expect(result).toEqual(1)
+        });
+
+        it('PASS - unique =', async () => {
             const result = L.query('additional_drivers.map(convictions).unique(code).count()');
             expect(result).toEqual(1);
         });

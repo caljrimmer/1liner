@@ -76,6 +76,7 @@
       "licence_month": 7,
       "licence_type": "F",
       "children": 0,
+      "medical_informed_dvla" : true,
       "convictions": [
         {
           "code": "SP50",
@@ -122,6 +123,7 @@
         "licence_month": 9,
         "licence_type": "F",
         "children": 0,
+        "medical_informed_dvla" : false,
         "convictions": [
           {
             "code": "SP50",
@@ -154,6 +156,7 @@
         "licence_month": 3,
         "licence_type": "F",
         "children": 0,
+        "medical_informed_dvla" : true,
         "convictions": [],
         "claims": []
       }

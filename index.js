@@ -66,7 +66,7 @@ function __checkOperator(element) {
 }
 
 function __getOperatorValue(element, segment){
-    const opValue = element.split('(').pop().split(')')[0]
+    const opValue = element.split('(').pop().split(')')[0];
     if (element.includes('count(')) return null;
     if (!opValue) throw new Error(`Operator error : No value in ${element} (in ${segment})`);
     if (opValue === '') throw new Error(`Operator error: No value in ${element} (in ${segment})`);
@@ -105,7 +105,10 @@ function __recursive(obj, el, nextEl, segment) {
         } else if (equator === '<=') {
             return newObj.filter(o => o[key] <= value);
         } else {
-            return newObj.filter(o => o[key] == value);
+            return newObj.filter(o => {
+                if(typeof o[key] === "boolean") return o[key].toString() == value;
+                return o[key] == value
+            });
         }
     }
 

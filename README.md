@@ -36,12 +36,35 @@ const obj = new L({
             code: "SP30",
             points: 1,
         }]
-    }
+    },
+    additional_drivers: [{
+        name: 'Ted',
+        age: 24
+    }, {
+        name: 'Mary',
+        age: 30
+    }]
 });
 
+/*
+* Normal object syntax
+*/ 
 obj.query('proposer.address.postcode'); // "AB13RT" 
+
+/*
+* Normal object then map on array element
+*/ 
 obj.query('proposer.convictions.map(code)'); // ["SP50", "SP50", "SP30"]
+
+/*
+* Normal object then chain array element filter on filter
+*/ 
 obj.query('proposer.convictions.filter(points<=2).filter(code=SP30).map(code)'); // ["SP30"]
+
+/*
+* Array first element so filter applied immediately
+*/ 
+obj.query('additional_drivers.filter(age>24).map(name'); // ["Mary"]
 ```
 
 Installation
@@ -205,6 +228,14 @@ const obj = new L({
         {
             code: "SP30",
             points: 2
+        }],
+        claims: [{
+            code: "A",
+            at_fault: false,
+        },
+        {
+            code: "W",
+            at_fault: true,
         }]
     }    
 });
@@ -216,6 +247,8 @@ obj.query('proposer.convictions.filter(points<4).map(code)'); // ["SP30"]
 obj.query('proposer.convictions.filter(points<=4).map(code)'); // ["SP50", "SP30"]
 obj.query('proposer.convictions.filter(points>2).map(code)'); // ["SP50"]
 obj.query('proposer.convictions.filter(points>=2).map(code)'); // ["SP50", "SP30"]
+obj.query('proposer.claims.filter(at_fault=true).map(code)'); // ["W"]
+obj.query('proposer.claims.filter(at_fault=false).count()'); // 1
 ```
 
 ### - unique
