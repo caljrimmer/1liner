@@ -169,11 +169,21 @@ const obj = new L({
     }    
 });
 
-obj.query('proposer.convictions.min(points)'); // 2
-obj.query('proposer.convictions.max(points)'); // 4
-obj.query('proposer.convictions.range(points)'); // 2
-obj.query('proposer.convictions.mean(points)'); // 3
+obj.query('proposer.convictions.map(points).min()'); // 2
+obj.query('proposer.convictions.map(points).max()'); // 4
+obj.query('proposer.convictions.map(points).range()'); // 2
+obj.query('proposer.convictions.map(points).mean()'); // 3
+
+/**
+ * Defaulting result on min, max, mean
+ */
+ 
+obj.query('proposer.convictions.filter(points=0).min(10)'); // 10
+obj.query('proposer.convictions.filter(points=0).max(1)'); // 1
+obj.query('proposer.convictions.filter(points=0).mean(3)'); // 3
+
 ```
+
 
 ### - map
 

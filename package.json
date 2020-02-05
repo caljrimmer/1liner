@@ -1,6 +1,6 @@
 {
   "name": "1liner",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Query JSON with one line of code.",
   "main": "index.js",
   "scripts": {
@@ -34,6 +34,7 @@
     "lodash.isarray": "^4.0.0",
     "lodash.isundefined": "^3.0.1",
     "lodash.max": "^4.0.1",
+    "lodash.mean": "^4.1.0",
     "lodash.meanby": "^4.10.0",
     "lodash.min": "^4.0.1",
     "lodash.round": "^4.0.4",

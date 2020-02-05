@@ -76,7 +76,7 @@ describe('1Liner', () => {
         });
 
         it('PASS - mean', async () => {
-            const result = L.query('proposer.convictions.mean(points)');
+            const result = L.query('proposer.convictions.map(points).mean()');
             expect(result).toEqual(3.67);
         });
 
@@ -108,7 +108,7 @@ describe('1Liner', () => {
         });
 
         it('PASS - mean', async () => {
-            const result = L.query('additional_drivers.map(convictions).mean(points)');
+            const result = L.query('additional_drivers.map(convictions).map(points).mean()');
             expect(result).toEqual(7);
         });
 
@@ -117,7 +117,7 @@ describe('1Liner', () => {
             expect(result).toEqual(['W'])
         });
 
-        it('PASS - filter =', async () => {
+        it('PASS - filter = boolean', async () => {
             const result = L.query('additional_drivers.filter(medical_informed_dvla=true).count()');
             expect(result).toEqual(1)
         });
@@ -126,6 +126,27 @@ describe('1Liner', () => {
             const result = L.query('additional_drivers.map(convictions).unique(code).count()');
             expect(result).toEqual(1);
         });
+
+        it('PASS - max for [] is 0 with no default', async () => {
+            const result = L.query('additional_drivers.filter(title=MRS).map(ncd).max()');
+            expect(result).toEqual(0);
+        });
+
+        it('PASS - max for [] is 5 with no default', async () => {
+            const result = L.query('additional_drivers.filter(title=MRS).map(ncd).max(5)');
+            expect(result).toEqual(5);
+        });
+
+        it('PASS - min for [] is 5 with no default', async () => {
+            const result = L.query('additional_drivers.filter(title=MRS).map(ncd).min(5)');
+            expect(result).toEqual(5);
+        });
+
+        it('PASS - mean for [] is 5 with no default', async () => {
+            const result = L.query('additional_drivers.filter(title=MRS).map(ncd).mean(5)');
+            expect(result).toEqual(5);
+        });
+
     });
 
     describe('Load Test - Small 1 Quote (2.5KB) - 10000 executions in ms', () => {

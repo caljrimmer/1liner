@@ -13,7 +13,7 @@ const flatten = require('lodash.flatten');
 const round = require('lodash.round');
 const min = require('lodash.min');
 const max = require('lodash.max');
-const meanBy = require('lodash.meanby');
+const mean = require('lodash.mean');
 const sumBy = require('lodash.sumby');
 const isUndefined = require('lodash.isundefined');
 const unique = require('lodash.uniqby');
@@ -67,9 +67,11 @@ function __checkOperator(element) {
 
 function __getOperatorValue(element, segment){
     const opValue = element.split('(').pop().split(')')[0];
-    if (element.includes('count(')) return null;
-    if (!opValue) throw new Error(`Operator error : No value in ${element} (in ${segment})`);
-    if (opValue === '') throw new Error(`Operator error: No value in ${element} (in ${segment})`);
+    if (!opValue) {
+        if (element.includes('count(') || element.includes('max(') || element.includes('min(') || element.includes('mean(')) return null;
+        if (opValue === '') throw new Error(`Operator error: No value in ${element} (in ${segment})`);
+        throw new Error(`Operator error : No value in ${element} (in ${segment})`);
+    }
     return opValue;
 }
 
@@ -122,10 +124,7 @@ function __recursive(obj, el, nextEl, segment) {
         return flatten(newObj.map(o => o[key]));
     }
 
-    if (nextEl.includes('mean(')) {
-        const key =__getOperatorValue(nextEl, segment);
-        return round(meanBy(newObj, key), 2);
-    }
+    
 
     if (nextEl.includes('sum(')) {
         const key =__getOperatorValue(nextEl, segment);
@@ -136,16 +135,23 @@ function __recursive(obj, el, nextEl, segment) {
         return newObj.length;
     }
 
+    if (nextEl.includes('mean(')) {
+        const def =__getOperatorValue(nextEl, segment);
+        return round(mean(newObj), 2) || (def ? parseFloat(def) : 0);
+    }
+
     if (nextEl.includes('min(')) {
-        return min(newObj);
+        const def = __getOperatorValue(nextEl, segment);
+        return min(newObj) || (def ? parseFloat(def) : 0);
     }
 
     if (nextEl.includes('max(')) {
-        return max(newObj);
+        const def = __getOperatorValue(nextEl, segment);
+        return max(newObj) || (def ? parseFloat(def) : 0);
     }
 
     if (nextEl.includes('range(')) {
-        return max(newObj) - min(newObj);
+        return (max(newObj) - min(newObj) || 0);
     }
 }
 
