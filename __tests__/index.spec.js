@@ -89,6 +89,16 @@ describe('1Liner', () => {
             const result = L.query('proposer.convictions.unique(code).count()');
             expect(result).toEqual(1);
         });
+
+        it('PASS - exists true', async () => {
+            const result = L.query('policy.address.line_3.exists()');
+            expect(result).toEqual('true');
+        });
+
+        it('PASS - exists false', async () => {
+            const result = L.query('policy.address.line_1.exists()');
+            expect(result).toEqual('false');
+        });
     });
     
     describe('Array first', () => {

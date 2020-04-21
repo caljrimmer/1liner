@@ -64,7 +64,7 @@ obj.query('proposer.convictions.filter(points<=2).filter(code=SP30).map(code)');
 /*
 * Array first element so filter applied immediately
 */ 
-obj.query('additional_drivers.filter(age>24).map(name'); // ["Mary"]
+obj.query('additional_drivers.filter(age>24).map(name)'); // ["Mary"]
 ```
 
 Installation
@@ -288,6 +288,33 @@ const obj = new L({
 });
 
 obj.query('proposer.convictions.unique(code).count()'); // 1
+```
+
+### - exists
+
+Checks if property value exists i.e. not null, undefined, empty string or 0.
+
+Example:
+
+```javascript
+const L = require('1liner');
+
+const obj = new L({
+    proposer: {
+        title: "MR",
+        first_names: "Toadie",
+        middle_name: "",
+        last_names: "Ezakeeper",
+        age: 0,
+        spouse: null
+    }    
+});
+
+obj.query('proposer.middle_name.exists()'); // "false"
+obj.query('proposer.age.exists()'); // "false"
+obj.query('proposer.spouse.exists()'); // "false"
+obj.query('proposer.title.exists()'); // "true"
+
 ```
 
 Testing

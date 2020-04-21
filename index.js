@@ -44,7 +44,8 @@ const operators = [
     'min',
     'max',
     'range',
-    'unique'
+    'unique',
+    'exists',
 ];
 
 /**
@@ -81,7 +82,7 @@ function __recursive(obj, el, nextEl, segment) {
 
     // Check element is array and next element is an operator
     if(__checkOperator(nextEl)) {
-        if (!isArray(obj[el]) && !isArray(obj)) {
+        if (!isArray(obj[el]) && !isArray(obj) && nextEl !=='exists()') {
             throw new Error(`Path error: no object exists at ${el} (in ${segment}`);
         } 
     } else {
@@ -122,9 +123,7 @@ function __recursive(obj, el, nextEl, segment) {
     if (nextEl.includes('map(')) {
         const key =__getOperatorValue(nextEl, segment);
         return flatten(newObj.map(o => o[key]));
-    }
-
-    
+    } 
 
     if (nextEl.includes('sum(')) {
         const key =__getOperatorValue(nextEl, segment);
@@ -133,6 +132,10 @@ function __recursive(obj, el, nextEl, segment) {
 
     if (nextEl.includes('count(')) {
         return newObj.length;
+    }
+
+    if (nextEl.includes('exists(')) {
+        return (newObj === '' || newObj === 0 || newObj === null || newObj === undefined).toString();
     }
 
     if (nextEl.includes('mean(')) {
