@@ -347,7 +347,7 @@ Bundling
 -------
 ```
 npm run bundle
-
+npm publish
 ```
 
 
