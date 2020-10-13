@@ -42,6 +42,18 @@ describe('1Liner', () => {
                 L.query('proposer.claims.bob');
             }).toThrowError(/Path error/);
         });
+
+        it('FAIL - Multi Query returns not a number (string)', async () => {
+            expect(() => {
+                L.query('max([additional_drivers.map(ncd).max(), vehicle.reg])');
+            }).toThrowError(/Multi query error/);
+        });
+
+        it('FAIL - Multi Query returns not a number (array)', async () => {
+            expect(() => {
+                L.query('min([additional_drivers.map(ncd).max(), proposer.convictions.map(points)])');
+            }).toThrowError(/Multi query error/);
+        });
     });
 
     describe('Object first', () => {
@@ -177,6 +189,18 @@ describe('1Liner', () => {
             expect(result).toEqual(5);
         });
 
+    });
+
+    describe('Evaluate Multiple Querys', () => {
+        it('PASS - max([query1, query2])', async () => {
+            const result = L.query('max([additional_drivers.map(ncd).max(), proposer.ncd])');
+            expect(result).toEqual(16);
+        });
+
+        it('PASS - min([query1, query2])', async () => {
+            const result = L.query('min([additional_drivers.map(ncd).max(), proposer.ncd])');
+            expect(result).toEqual(5);
+        });
     });
 
     describe('Load Test - Small 1 Quote (2.5KB) - 10000 executions in ms', () => {

@@ -317,7 +317,38 @@ obj.query('proposer.middle_name.exists()'); // "false"
 obj.query('proposer.age.exists()'); // "false"
 obj.query('proposer.spouse.exists()'); // "false"
 obj.query('proposer.title.exists()'); // "true"
+```
 
+### Multiple Queries
+
+Returns an result from multiple queries. The queries need to return numbers as values otherwise an error with be thrown.
+
+Example:
+
+```javascript
+const L = require('1liner');
+
+const obj = new L({
+    proposer: {
+        title: "MR",
+        first_names: "Toadie",
+        last_names: "Ezakeeper",
+        age: 33,
+        height: 180,
+        weight: 100,
+        convictions: [{
+            code: "SP50",
+            points: 4
+        },
+        {
+            code: "SP50",
+            points: 2
+        }]
+    }    
+});
+
+obj.query('min([proposer.weight, proposer.height])'); // 100
+obj.query('max([proposer.weight, proposer.height])'); // 180
 ```
 
 Testing

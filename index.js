@@ -17,6 +17,7 @@ const mean = require('lodash.mean');
 const sumBy = require('lodash.sumby');
 const isUndefined = require('lodash.isundefined');
 const unique = require('lodash.uniqby');
+const isNumber = require('lodash.isnumber');
 
 /**
  * Define equators
@@ -51,6 +52,20 @@ const operators = [
 /**
  * Private functions
  */
+
+function __getMultipleQueries(segment, method, singleQuery) {
+    const queries = segment.split(',')
+        .map(s => {
+            return s.replace(`${method}([`, '').replace('])', '').trim();
+        })
+        .map(q => {
+            return singleQuery(q);
+        });
+    if (queries.filter(q => !isNumber(q)).length > 0) {
+        throw new Error(`Query error: Only numbers can be returned for multiple query statements ${segment}`); 
+    }
+    return queries;
+} 
 
 function __getEquator(item) {
     let selected;
@@ -167,7 +182,21 @@ class L {
         this.source = source;
     }
 
-    query(segment) {
+    multiQuery(segment, method) {
+        const queries = segment.split(',')
+            .map(s => {
+                return s.replace(`${method}([`, '').replace('])', '').trim();
+            })
+            .map(q => {
+                return this.singleQuery(q);
+            });
+        if (queries.filter(q => !isNumber(q)).length > 0) {
+            throw new Error(`Multi query error: Only numbers can be returned for multiple query statements ${segment}`); 
+        }
+        return queries;
+    } 
+
+    singleQuery(segment) {
         // Clone source object
         let result = { ...this.source };
         const elements = segment.split('.');
@@ -186,6 +215,21 @@ class L {
         });
         if (isUndefined(result)) throw new Error(`Path error: No object path for ${segment}`);
         return result;
+    }
+
+    query(segment) {
+
+        if (segment.startsWith('max([')) {
+            const results = this.multiQuery(segment, 'max');
+            return max(results);
+        }
+
+        if (segment.startsWith('min([')) {
+            const results = this.multiQuery(segment, 'min');
+            return min(results);
+        }
+
+        return this.singleQuery(segment);
     }
 }
 
