@@ -110,7 +110,7 @@ function __recursive(obj, el, nextEl, segment) {
         } else {
             return newObj.filter(o => {
                 if(typeof o[key] === "boolean") return o[key].toString() == value;
-                return o[key] == value
+                return o[key] == value || `"${o[key]}"` == value ||   `'${o[key]}'` == value
             });
         }
     }

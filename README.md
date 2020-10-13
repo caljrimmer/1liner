@@ -60,6 +60,7 @@ obj.query('proposer.convictions.map(code)'); // ["SP50", "SP50", "SP30"]
 * Normal object then chain array element filter on filter
 */ 
 obj.query('proposer.convictions.filter(points<=2).filter(code=SP30).map(code)'); // ["SP30"]
+obj.query('proposer.convictions.filter(points<=2).filter(code="SP30").map(code)'); // ["SP30"]
 
 /*
 * Array first element so filter applied immediately
@@ -141,6 +142,7 @@ const obj = new L({
 
 obj.query('proposer.claims.count()'); // 2
 obj.query('proposer.claims.filter(code=W).count()'); // 1
+obj.query('proposer.claims.filter(code="W").count()'); // 1
 ```
 
 ### - min, max, mean, range
@@ -251,6 +253,7 @@ const obj = new L({
 });
 
 obj.query('proposer.convictions.filter(code=SP30)'); // [{ code: "SP30", points: 2 }]
+obj.query('proposer.convictions.filter(code="SP30")'); // [{ code: "SP30", points: 2 }]
 obj.query('proposer.convictions.filter(code=SP30).map(points)'); // [2]
 obj.query('proposer.convictions.filter(code!=SP30).map(points)'); // [4]
 obj.query('proposer.convictions.filter(points<4).map(code)'); // ["SP30"]
@@ -339,6 +342,14 @@ Speed
 
 + Small Object (2.5KB) - 10000 query executions takes *150ms*
 + Large Object (2.5MB) - 1000 query executions takes *1094ms*
+
+Bundling
+-------
+```
+npm run bundle
+
+```
+
 
 Contributions
 -------------

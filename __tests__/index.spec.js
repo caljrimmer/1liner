@@ -80,8 +80,18 @@ describe('1Liner', () => {
             expect(result).toEqual(3.67);
         });
 
-        it('PASS - filter =', async () => {
+        it('PASS - filter (string not quotes) = ', async () => {
             const result = L.query('proposer.claims.filter(code=A).map(code)');
+            expect(result).toEqual(['A'])
+        });
+
+        it('PASS - filter (string " quotes)  =', async () => {
+            const result = L.query('proposer.claims.filter(code="A").map(code)');
+            expect(result).toEqual(['A'])
+        });
+
+        it(`PASS - filter (string ' quotes)  =`, async () => {
+            const result = L.query(`proposer.claims.filter(code='A').map(code)`);
             expect(result).toEqual(['A'])
         });
 
@@ -122,8 +132,18 @@ describe('1Liner', () => {
             expect(result).toEqual(7);
         });
 
-        it('PASS - filter =', async () => {
+        it('PASS - filter (string not quotes) =', async () => {
             const result = L.query('additional_drivers.map(claims).filter(code=W).map(code)');
+            expect(result).toEqual(['W'])
+        });
+
+        it('PASS - filter (string " quotes) =', async () => {
+            const result = L.query('additional_drivers.map(claims).filter(code="W").map(code)');
+            expect(result).toEqual(['W'])
+        });
+
+        it(`PASS - filter filter (string ' quotes) =`, async () => {
+            const result = L.query(`additional_drivers.map(claims).filter(code='W').map(code)`);
             expect(result).toEqual(['W'])
         });
 
@@ -143,12 +163,12 @@ describe('1Liner', () => {
         });
 
         it('PASS - max for [] is 5 with no default', async () => {
-            const result = L.query('additional_drivers.filter(title=MRS).map(ncd).max(5)');
+            const result = L.query('additional_drivers.filter(title="MRS").map(ncd).max(5)');
             expect(result).toEqual(5);
         });
 
         it('PASS - min for [] is 5 with no default', async () => {
-            const result = L.query('additional_drivers.filter(title=MRS).map(ncd).min(5)');
+            const result = L.query(`additional_drivers.filter(title='MRS').map(ncd).min(5)`);
             expect(result).toEqual(5);
         });
 
