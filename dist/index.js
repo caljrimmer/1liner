@@ -6901,6 +6901,87 @@ function property(path) {
 
 module.exports = uniqBy;
 
+},{}],"node_modules/lodash.isnumber/index.js":[function(require,module,exports) {
+/**
+ * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modularize exports="npm" -o ./`
+ * Copyright 2012-2016 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2016 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** `Object#toString` result references. */
+var numberTag = '[object Number]';
+
+/** Used for built-in method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+ * of values.
+ */
+var objectToString = objectProto.toString;
+
+/**
+ * Checks if `value` is object-like. A value is object-like if it's not `null`
+ * and has a `typeof` result of "object".
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ * @example
+ *
+ * _.isObjectLike({});
+ * // => true
+ *
+ * _.isObjectLike([1, 2, 3]);
+ * // => true
+ *
+ * _.isObjectLike(_.noop);
+ * // => false
+ *
+ * _.isObjectLike(null);
+ * // => false
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Checks if `value` is classified as a `Number` primitive or object.
+ *
+ * **Note:** To exclude `Infinity`, `-Infinity`, and `NaN`, which are classified
+ * as numbers, use the `_.isFinite` method.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @example
+ *
+ * _.isNumber(3);
+ * // => true
+ *
+ * _.isNumber(Number.MIN_VALUE);
+ * // => true
+ *
+ * _.isNumber(Infinity);
+ * // => true
+ *
+ * _.isNumber('3');
+ * // => false
+ */
+function isNumber(value) {
+  return typeof value == 'number' ||
+    (isObjectLike(value) && objectToString.call(value) == numberTag);
+}
+
+module.exports = isNumber;
+
 },{}],"index.js":[function(require,module,exports) {
 var define;
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -6941,6 +7022,8 @@ var sumBy = require('lodash.sumby');
 var isUndefined = require('lodash.isundefined');
 
 var unique = require('lodash.uniqby');
+
+var isNumber = require('lodash.isnumber');
 /**
  * Define equators
  */
@@ -6955,6 +7038,22 @@ var operators = ['count', 'map', 'filter', 'sum', 'mean', 'min', 'max', 'range',
 /**
  * Private functions
  */
+
+function __getMultipleQueries(segment, method, singleQuery) {
+  var queries = segment.split(',').map(function (s) {
+    return s.replace("".concat(method, "(["), '').replace('])', '').trim();
+  }).map(function (q) {
+    return singleQuery(q);
+  });
+
+  if (queries.filter(function (q) {
+    return !isNumber(q);
+  }).length > 0) {
+    throw new Error("Query error: Only numbers can be returned for multiple query statements ".concat(segment));
+  }
+
+  return queries;
+}
 
 function __getEquator(item) {
   var selected;
@@ -7102,8 +7201,27 @@ function () {
   }
 
   _createClass(L, [{
-    key: "query",
-    value: function query(segment) {
+    key: "multiQuery",
+    value: function multiQuery(segment, method) {
+      var _this = this;
+
+      var queries = segment.split(',').map(function (s) {
+        return s.replace("".concat(method, "(["), '').replace('])', '').trim();
+      }).map(function (q) {
+        return _this.singleQuery(q);
+      });
+
+      if (queries.filter(function (q) {
+        return !isNumber(q);
+      }).length > 0) {
+        throw new Error("Multi query error: Only numbers can be returned for multiple query statements ".concat(segment));
+      }
+
+      return queries;
+    }
+  }, {
+    key: "singleQuery",
+    value: function singleQuery(segment) {
       // Clone source object
       var result = _objectSpread({}, this.source);
 
@@ -7122,6 +7240,22 @@ function () {
       });
       if (isUndefined(result)) throw new Error("Path error: No object path for ".concat(segment));
       return result;
+    }
+  }, {
+    key: "query",
+    value: function query(segment) {
+      if (segment.startsWith('max([')) {
+        var results = this.multiQuery(segment, 'max');
+        return max(results);
+      }
+
+      if (segment.startsWith('min([')) {
+        var _results = this.multiQuery(segment, 'min');
+
+        return min(_results);
+      }
+
+      return this.singleQuery(segment);
     }
   }]);
 
@@ -7143,7 +7277,7 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     window.L = L;
   }
 }
-},{"lodash.get":"node_modules/lodash.get/index.js","lodash.isarray":"node_modules/lodash.isarray/index.js","lodash.flatten":"node_modules/lodash.flatten/index.js","lodash.round":"node_modules/lodash.round/index.js","lodash.min":"node_modules/lodash.min/index.js","lodash.max":"node_modules/lodash.max/index.js","lodash.mean":"node_modules/lodash.mean/index.js","lodash.sumby":"node_modules/lodash.sumby/index.js","lodash.isundefined":"node_modules/lodash.isundefined/index.js","lodash.uniqby":"node_modules/lodash.uniqby/index.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"lodash.get":"node_modules/lodash.get/index.js","lodash.isarray":"node_modules/lodash.isarray/index.js","lodash.flatten":"node_modules/lodash.flatten/index.js","lodash.round":"node_modules/lodash.round/index.js","lodash.min":"node_modules/lodash.min/index.js","lodash.max":"node_modules/lodash.max/index.js","lodash.mean":"node_modules/lodash.mean/index.js","lodash.sumby":"node_modules/lodash.sumby/index.js","lodash.isundefined":"node_modules/lodash.isundefined/index.js","lodash.uniqby":"node_modules/lodash.uniqby/index.js","lodash.isnumber":"node_modules/lodash.isnumber/index.js"}],"node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -7171,7 +7305,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51309" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59643" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
