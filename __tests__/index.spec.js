@@ -211,6 +211,16 @@ describe('1Liner', () => {
             const result = L.query('min([10, proposer.ncd])');
             expect(result).toEqual(5);
         });
+
+        it('PASS - range(query1.max(), query2])', async () => {
+            const result = L.query('range([additional_drivers.map(licence_year).max(), proposer.licence_year])');
+            expect(result).toEqual(13);
+        });
+
+        it('PASS - range([query1.min(), query2])', async () => {
+            const result = L.query('range([additional_drivers.map(licence_year).min(), proposer.licence_year])');
+            expect(result).toEqual(16);
+        });
     });
 
     describe('Load Test - Small 1 Quote (2.5KB) - 10000 executions in ms', () => {

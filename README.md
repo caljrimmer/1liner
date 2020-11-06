@@ -145,7 +145,7 @@ obj.query('proposer.claims.filter(code=W).count()'); // 1
 obj.query('proposer.claims.filter(code="W").count()'); // 1
 ```
 
-### - min, max, mean, range
+### - min, max, mean, range, sum
 
 Finding the min integer, max integer and range between the two.
 
@@ -175,6 +175,7 @@ obj.query('proposer.convictions.map(points).min()'); // 2
 obj.query('proposer.convictions.map(points).max()'); // 4
 obj.query('proposer.convictions.map(points).range()'); // 2
 obj.query('proposer.convictions.map(points).mean()'); // 3
+obj.query('proposer.convictions.sum(points)'); // 6
 
 /**
  * Defaulting result on min, max, mean
@@ -323,6 +324,8 @@ obj.query('proposer.title.exists()'); // "true"
 
 Returns an result from multiple queries. The queries need to return numbers as values otherwise an error with be thrown. The queries can be replaced with numbers too.
 
+Multi-query options are min, max or range.
+
 Example:
 
 ```javascript
@@ -351,6 +354,7 @@ obj.query('min([proposer.weight, proposer.height])'); // 100
 obj.query('max([proposer.weight, proposer.height])'); // 180
 obj.query('min([100, proposer.height])'); // 100
 obj.query('max([100, proposer.height])'); // 180
+obj.query('range([proposer.weight, proposer.height])'); // 80
 ```
 
 Testing

@@ -231,6 +231,11 @@ class L {
             return min(results);
         }
 
+        if (segment.startsWith('range([')) {
+            const results = this.multiQuery(segment, 'range');
+            return (max(results) - min(results) || 0)
+        }
+
         return this.singleQuery(segment);
     }
 }
