@@ -188,6 +188,8 @@ class L {
                 return s.replace(`${method}([`, '').replace('])', '').trim();
             })
             .map(q => {
+                // If number rather than query then just return
+                if (!isNaN(parseInt(q))) return round(q, 2);
                 return this.singleQuery(q);
             });
         if (queries.filter(q => !isNumber(q)).length > 0) {

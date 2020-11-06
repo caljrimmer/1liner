@@ -197,8 +197,18 @@ describe('1Liner', () => {
             expect(result).toEqual(16);
         });
 
+        it('PASS - min([query1, 10])', async () => {
+            const result = L.query('max([10, proposer.ncd])');
+            expect(result).toEqual(10);
+        });
+
         it('PASS - min([query1, query2])', async () => {
             const result = L.query('min([additional_drivers.map(ncd).max(), proposer.ncd])');
+            expect(result).toEqual(5);
+        });
+
+        it('PASS - min([query1, 10])', async () => {
+            const result = L.query('min([10, proposer.ncd])');
             expect(result).toEqual(5);
         });
     });

@@ -321,7 +321,7 @@ obj.query('proposer.title.exists()'); // "true"
 
 ### Multiple Queries
 
-Returns an result from multiple queries. The queries need to return numbers as values otherwise an error with be thrown.
+Returns an result from multiple queries. The queries need to return numbers as values otherwise an error with be thrown. The queries can be replaced with numbers too.
 
 Example:
 
@@ -349,6 +349,8 @@ const obj = new L({
 
 obj.query('min([proposer.weight, proposer.height])'); // 100
 obj.query('max([proposer.weight, proposer.height])'); // 180
+obj.query('min([100, proposer.height])'); // 100
+obj.query('max([100, proposer.height])'); // 180
 ```
 
 Testing
