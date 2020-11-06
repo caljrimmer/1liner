@@ -7208,6 +7208,8 @@ function () {
       var queries = segment.split(',').map(function (s) {
         return s.replace("".concat(method, "(["), '').replace('])', '').trim();
       }).map(function (q) {
+        // If number rather than query then just return
+        if (!isNaN(parseInt(q))) return round(q, 2);
         return _this.singleQuery(q);
       });
 
@@ -7305,7 +7307,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59643" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65142" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
