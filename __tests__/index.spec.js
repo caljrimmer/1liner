@@ -19,6 +19,12 @@ describe('1Liner', () => {
             }).toThrowError(/Path error/);
         });
 
+        it('FAIL - null', async () => {
+            expect(() => {
+                L.query();
+            }).toThrowError(/Path error/);
+        });
+
         it('FAIL - empty operator', async () => {
             expect(() => {
                 L.query('proposer.claims.map()');

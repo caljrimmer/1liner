@@ -219,8 +219,7 @@ class L {
         return result;
     }
 
-    query(segment) {
-
+    query(segment = '') {
         if (segment.startsWith('max([')) {
             const results = this.multiQuery(segment, 'max');
             return max(results);
