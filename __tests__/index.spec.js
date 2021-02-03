@@ -49,6 +49,12 @@ describe('1Liner', () => {
             }).toThrowError(/Path error/);
         });
 
+        it('FAIL - Nested map does not exist', async () => {
+            expect(() => {
+                L.query('additional_drivers.map(conviction).map(code)');
+            }).toThrowError(/Path error/);
+        });
+
         it('FAIL - Multi Query returns not a number (string)', async () => {
             expect(() => {
                 L.query('max([additional_drivers.map(ncd).max(), vehicle.reg])');
@@ -194,7 +200,6 @@ describe('1Liner', () => {
             const result = L.query('additional_drivers.filter(title=MRS).map(ncd).mean(5)');
             expect(result).toEqual(5);
         });
-
     });
 
     describe('Evaluate Multiple Querys', () => {

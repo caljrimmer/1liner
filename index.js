@@ -53,7 +53,7 @@ const operators = [
  * Private functions
  */
 
-function __getMultipleQueries(segment, method, singleQuery) {
+function __getMultipleQueries(segment = '', method = '', singleQuery) {
     const queries = segment.split(',')
         .map(s => {
             return s.replace(`${method}([`, '').replace('])', '').trim();
@@ -67,21 +67,21 @@ function __getMultipleQueries(segment, method, singleQuery) {
     return queries;
 } 
 
-function __getEquator(item) {
+function __getEquator(item = '') {
     let selected;
     equators.forEach(eq => { if(item.includes(eq)) selected = eq; });
     if (!selected) throw new Error(`Equator error: no equator exists for ${item}`);
     return selected;
 }
 
-function __checkOperator(element) {
+function __checkOperator(element = '') {
     let check = false;
     operators.forEach(o => { if(element.includes(o + '(')) check = true; });
     if (!check && element.includes('(')) throw new Error(`Operator error: no operator exists for ${element}`);
     return check;
 }
 
-function __getOperatorValue(element, segment){
+function __getOperatorValue(element = '', segment){
     const opValue = element.split('(').pop().split(')')[0];
     if (!opValue) {
         if (element.includes('count(') || element.includes('max(') || element.includes('min(') || element.includes('mean(')) return null;
@@ -91,7 +91,7 @@ function __getOperatorValue(element, segment){
     return opValue;
 }
 
-function __recursive(obj, el, nextEl, segment) {
+function __recursive(obj = {}, el = '', nextEl, segment) {
     if(!nextEl) return obj;
     const newObj = isArray(obj) ? obj : obj[el];
 
@@ -137,7 +137,10 @@ function __recursive(obj, el, nextEl, segment) {
 
     if (nextEl.includes('map(')) {
         const key =__getOperatorValue(nextEl, segment);
-        return flatten(newObj.map(o => o[key]));
+        return flatten(newObj.map((o) => {
+            if (!o) throw new Error(`Path error: no ${key} in parent of query ${segment}`)
+            return o[key];
+        }));
     } 
 
     if (nextEl.includes('sum(')) {
