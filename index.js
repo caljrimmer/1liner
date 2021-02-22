@@ -91,6 +91,10 @@ function __getOperatorValue(element = '', segment){
     return opValue;
 }
 
+function cleanStringQuotes(str = '') {
+    return str.replace(/"/g, '').replace(/'/g, '');
+}
+
 function __recursive(obj = {}, el = '', nextEl, segment) {
     if(!nextEl) return obj;
     const newObj = isArray(obj) ? obj : obj[el];
@@ -111,7 +115,7 @@ function __recursive(obj = {}, el = '', nextEl, segment) {
         const item = __getOperatorValue(nextEl, segment);
         const equator = __getEquator(item);
         const key = item.split(equator)[0];
-        const value = item.split(equator)[1];
+        const value = cleanStringQuotes(item.split(equator)[1]);
         if (equator === '!=') {
             return newObj.filter(o => o[key] != value);
         } else if (equator === '>') {
@@ -125,7 +129,7 @@ function __recursive(obj = {}, el = '', nextEl, segment) {
         } else {
             return newObj.filter(o => {
                 if(typeof o[key] === "boolean") return o[key].toString() == value;
-                return o[key] == value || `"${o[key]}"` == value ||   `'${o[key]}'` == value
+                return o[key] == cleanStringQuotes(value);
             });
         }
     }

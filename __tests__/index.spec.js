@@ -119,6 +119,11 @@ describe('1Liner', () => {
             expect(result).toEqual(['A'])
         });
 
+        it(`PASS - filter (!=)`, async () => {
+            const result = L.query(`proposer.claims.filter(code!=A).count()`);
+            expect(result).toEqual(0)
+        });
+
         it('PASS - unique =', async () => {
             const result = L.query('proposer.convictions.unique(code).count()');
             expect(result).toEqual(1);
@@ -244,7 +249,7 @@ describe('1Liner', () => {
                 L.query('vehicle.rating');
             });
             const end = performance.now();
-            expect(end - start).toBeLessThan(250);
+            expect(end - start).toBeLessThan(500);
         });
         it('filter, sum, map', async () => {
             const start = performance.now();
@@ -255,7 +260,7 @@ describe('1Liner', () => {
                 L.query('additional_drivers.map(convictions).sum(points)');
             });
             const end = performance.now();
-            expect(end - start).toBeLessThan(250);
+            expect(end - start).toBeLessThan(500);
         });
     });
 
@@ -269,7 +274,7 @@ describe('1Liner', () => {
                 L.query(`quote_${random(1, 999)}.vehicle.rating`);
             });
             const end = performance.now();
-            expect(end - start).toBeLessThan(1500);
+            expect(end - start).toBeLessThan(2000);
         });
         it('filter, sum, map', async () => {
             const start = performance.now();
@@ -280,7 +285,7 @@ describe('1Liner', () => {
                 L.query(`quote_${random(1, 999)}.additional_drivers.map(convictions).sum(points)`);
             });
             const end = performance.now();
-            expect(end - start).toBeLessThan(1500);
+            expect(end - start).toBeLessThan(2000);
         });
     });
     

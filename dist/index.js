@@ -7039,7 +7039,10 @@ var operators = ['count', 'map', 'filter', 'sum', 'mean', 'min', 'max', 'range',
  * Private functions
  */
 
-function __getMultipleQueries(segment, method, singleQuery) {
+function __getMultipleQueries() {
+  var segment = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var method = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  var singleQuery = arguments.length > 2 ? arguments[2] : undefined;
   var queries = segment.split(',').map(function (s) {
     return s.replace("".concat(method, "(["), '').replace('])', '').trim();
   }).map(function (q) {
@@ -7055,7 +7058,8 @@ function __getMultipleQueries(segment, method, singleQuery) {
   return queries;
 }
 
-function __getEquator(item) {
+function __getEquator() {
+  var item = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
   var selected;
   equators.forEach(function (eq) {
     if (item.includes(eq)) selected = eq;
@@ -7064,7 +7068,8 @@ function __getEquator(item) {
   return selected;
 }
 
-function __checkOperator(element) {
+function __checkOperator() {
+  var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
   var check = false;
   operators.forEach(function (o) {
     if (element.includes(o + '(')) check = true;
@@ -7073,7 +7078,9 @@ function __checkOperator(element) {
   return check;
 }
 
-function __getOperatorValue(element, segment) {
+function __getOperatorValue() {
+  var element = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  var segment = arguments.length > 1 ? arguments[1] : undefined;
   var opValue = element.split('(').pop().split(')')[0];
 
   if (!opValue) {
@@ -7085,7 +7092,11 @@ function __getOperatorValue(element, segment) {
   return opValue;
 }
 
-function __recursive(obj, el, nextEl, segment) {
+function __recursive() {
+  var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var el = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  var nextEl = arguments.length > 2 ? arguments[2] : undefined;
+  var segment = arguments.length > 3 ? arguments[3] : undefined;
   if (!nextEl) return obj;
   var newObj = isArray(obj) ? obj : obj[el]; // Check element is array and next element is an operator
 
@@ -7146,6 +7157,7 @@ function __recursive(obj, el, nextEl, segment) {
     var _key2 = __getOperatorValue(nextEl, segment);
 
     return flatten(newObj.map(function (o) {
+      if (!o) throw new Error("Path error: no ".concat(_key2, " in parent of query ").concat(segment));
       return o[_key2];
     }));
   }
@@ -7315,7 +7327,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56219" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62084" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
