@@ -237,6 +237,26 @@ describe('1Liner', () => {
             const result = L.query('range([additional_drivers.map(licence_year).min(), proposer.licence_year])');
             expect(result).toEqual(16);
         });
+
+        it('PASS - each.additional_drivers.map(claims).count()', async () => {
+            const result = L.query('each.additional_drivers.map(claims).count()');
+            expect(result).toEqual([1, 0]);
+        });
+
+        it('PASS - additional_drivers.map(claims).count()', async () => {
+            const result = L.query('additional_drivers.map(claims).count()');
+            expect(result).toEqual(1);
+        });
+
+        it('PASS - each.additional_drivers.map(claims).filter(code=W).map(code)', async () => {
+            const result = L.query('each.additional_drivers.map(claims).filter(code=W).map(code)');
+            expect(result).toEqual([['W'], []]);
+        });
+
+        it('PASS - additional_drivers.map(claims).filter(code=W).map(code)', async () => {
+            const result = L.query('additional_drivers.map(claims).filter(code=W).map(code)');
+            expect(result).toEqual(['W']);
+        });
     });
 
     describe('Load Test - Small 1 Quote (2.5KB) - 10000 executions in ms', () => {
@@ -274,7 +294,7 @@ describe('1Liner', () => {
                 L.query(`quote_${random(1, 999)}.vehicle.rating`);
             });
             const end = performance.now();
-            expect(end - start).toBeLessThan(2000);
+            expect(end - start).toBeLessThan(5000);
         });
         it('filter, sum, map', async () => {
             const start = performance.now();
@@ -285,7 +305,7 @@ describe('1Liner', () => {
                 L.query(`quote_${random(1, 999)}.additional_drivers.map(convictions).sum(points)`);
             });
             const end = performance.now();
-            expect(end - start).toBeLessThan(2000);
+            expect(end - start).toBeLessThan(5000);
         });
     });
     

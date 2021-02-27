@@ -189,6 +189,20 @@ class L {
         this.source = source;
     }
 
+    eachQuery(segment) {
+        const clean = segment.replace('each.', '')
+        const segments = clean.split('.');
+        const first_segment = segments[0];
+        const subsequent_segment = segments.splice(1, segments.length).join('.');
+        const each_items = this.singleQuery(first_segment);
+        const result = each_items.map(item_source => {
+            return this.singleQuery(`item.${subsequent_segment}`, {
+                item: [item_source]
+            })
+        });
+        return result;
+    }
+
     multiQuery(segment, method) {
         const queries = segment.split(',')
             .map(s => {
@@ -205,9 +219,9 @@ class L {
         return queries;
     } 
 
-    singleQuery(segment) {
+    singleQuery(segment, amended_source) {
         // Clone source object
-        let result = { ...this.source };
+        let result = { ...(amended_source ? amended_source : this.source) };
         const elements = segment.split('.');
 
         // Return object
@@ -240,6 +254,11 @@ class L {
         if (segment.startsWith('range([')) {
             const results = this.multiQuery(segment, 'range');
             return (max(results) - min(results) || 0)
+        }
+
+        if (segment.startsWith('each.')) {
+            const results = this.eachQuery(segment, 'each');
+            return results;
         }
 
         return this.singleQuery(segment);

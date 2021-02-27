@@ -86,8 +86,8 @@ const L = require('1liner');
 const obj = new L({
     proposer: {
         title: "MR",
-        first_names: "Toadie",
-        last_names: "Ezakeeper",
+        first_names: "John",
+        last_names: "Smith",
         age: 33,
         claims: [{
             code: "A",
@@ -126,8 +126,8 @@ const L = require('1liner');
 const obj = new L({
     proposer: {
         title: "MR",
-        first_names: "Toadie",
-        last_names: "Ezakeeper",
+        first_names: "John",
+        last_names: "Smith",
         age: 33,
         claims: [{
             code: "A",
@@ -157,8 +157,8 @@ const L = require('1liner');
 const obj = new L({
     proposer: {
         title: "MR",
-        first_names: "Toadie",
-        last_names: "Ezakeeper",
+        first_names: "John",
+        last_names: "Smith",
         age: 33,
         convictions: [{
             code: "SP50",
@@ -200,8 +200,8 @@ const L = require('1liner');
 const obj = new L({
     proposer: {
         title: "MR",
-        first_names: "Toadie",
-        last_names: "Ezakeeper",
+        first_names: "John",
+        last_names: "Smith",
         age: 33,
         convictions: [{
             code: "SP50",
@@ -231,8 +231,8 @@ const L = require('1liner');
 const obj = new L({
     proposer: {
         title: "MR",
-        first_names: "Toadie",
-        last_names: "Ezakeeper",
+        first_names: "John",
+        last_names: "Smith",
         age: 33,
         convictions: [{
             code: "SP50",
@@ -277,8 +277,8 @@ const L = require('1liner');
 const obj = new L({
     proposer: {
         title: "MR",
-        first_names: "Toadie",
-        last_names: "Ezakeeper",
+        first_names: "John",
+        last_names: "Smith",
         age: 33,
         convictions: [{
             code: "SP50",
@@ -306,9 +306,9 @@ const L = require('1liner');
 const obj = new L({
     proposer: {
         title: "MR",
-        first_names: "Toadie",
+        first_names: "John",
         middle_name: "",
-        last_names: "Ezakeeper",
+        last_names: "Smith",
         age: 0,
         spouse: null
     }    
@@ -334,8 +334,8 @@ const L = require('1liner');
 const obj = new L({
     proposer: {
         title: "MR",
-        first_names: "Toadie",
-        last_names: "Ezakeeper",
+        first_names: "John",
+        last_names: "Smith",
         age: 33,
         height: 180,
         weight: 100,
@@ -355,6 +355,51 @@ obj.query('max([proposer.weight, proposer.height])'); // 180
 obj.query('min([100, proposer.height])'); // 100
 obj.query('max([100, proposer.height])'); // 180
 obj.query('range([proposer.weight, proposer.height])'); // 80
+```
+
+### each.
+
+Returns an array of results based on the query responses to each of the children queries. This is useful if you wish to aggregate each child node instead of all together. Each (each.) can only be used as the first segment declaration (i.e. first part of the query string) and can not be wrapped by min, max or range as the result can be integers, strings or nested arrays.
+
+Example:
+
+```javascript
+const L = require('1liner');
+
+const obj = new L({
+    additional_drivers: [{
+        title: "MR",
+        first_names: "John",
+        last_names: "Smith",
+        age: 33,
+        height: 180,
+        weight: 100,
+        convictions: [{
+            code: "SP50",
+            points: 4
+        },
+        {
+            code: "SP50",
+            points: 2
+        }]
+    },{
+        title: "MRS",
+        first_names: "Jane",
+        last_names: "Smith",
+        age: 30,
+        height: 120,
+        weight: 60,
+        convictions: [{
+            code: "SP10",
+            points: 0
+        }]
+    }]    
+});
+
+obj.query('each.additional_drivers.map(convictions).count()'); // [2, 1]
+obj.query('additional_drivers.map(convictions).count()'); // 3
+obj.query('each.additional_drivers.map(convictions).map(code)'); // [['SP50', 'SP50'], ['SP10']]
+obj.query('additional_drivers.map(convictions).map(code)'); // ['SP50', 'SP50', 'SP10']
 ```
 
 Testing

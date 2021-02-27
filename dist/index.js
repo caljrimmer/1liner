@@ -7092,6 +7092,11 @@ function __getOperatorValue() {
   return opValue;
 }
 
+function cleanStringQuotes() {
+  var str = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  return str.replace(/"/g, '').replace(/'/g, '');
+}
+
 function __recursive() {
   var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var el = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
@@ -7117,7 +7122,7 @@ function __recursive() {
     var equator = __getEquator(item);
 
     var key = item.split(equator)[0];
-    var value = item.split(equator)[1];
+    var value = cleanStringQuotes(item.split(equator)[1]);
 
     if (equator === '!=') {
       return newObj.filter(function (o) {
@@ -7142,7 +7147,7 @@ function __recursive() {
     } else {
       return newObj.filter(function (o) {
         if (typeof o[key] === "boolean") return o[key].toString() == value;
-        return o[key] == value || "\"".concat(o[key], "\"") == value || "'".concat(o[key], "'") == value;
+        return o[key] == cleanStringQuotes(value);
       });
     }
   }
@@ -7327,7 +7332,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62084" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63581" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
