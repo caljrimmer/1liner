@@ -7034,7 +7034,7 @@ var equators = ['=', '!=', '>', '>=', '<', '<='];
  * Define array operators
  */
 
-var operators = ['count', 'map', 'filter', 'sum', 'mean', 'min', 'max', 'range', 'unique', 'exists'];
+var operators = ['count', 'map', 'filter', 'sum', 'mean', 'min', 'max', 'range', 'unique', 'exists', 'default'];
 /**
  * Private functions
  */
@@ -7106,7 +7106,7 @@ function __recursive() {
   var newObj = isArray(obj) ? obj : obj[el]; // Check element is array and next element is an operator
 
   if (__checkOperator(nextEl)) {
-    if (!isArray(obj[el]) && !isArray(obj) && nextEl !== 'exists()') {
+    if (!isArray(obj[el]) && !isArray(obj) && nextEl !== 'exists()' && !nextEl.includes('default(')) {
       throw new Error("Path error: no object exists at ".concat(el, " (in ").concat(segment));
     }
   } else {
@@ -7202,6 +7202,12 @@ function __recursive() {
   if (nextEl.includes('range(')) {
     return max(newObj) - min(newObj) || 0;
   }
+
+  if (nextEl.includes('default(')) {
+    var _def3 = __getOperatorValue(nextEl, segment);
+
+    return newObj || (isNaN(parseFloat(_def3)) ? cleanStringQuotes(_def3) : parseFloat(_def3));
+  }
 }
 /**
  * 1Liner class
@@ -7218,16 +7224,33 @@ function () {
   }
 
   _createClass(L, [{
+    key: "eachQuery",
+    value: function eachQuery(segment) {
+      var _this = this;
+
+      var clean = segment.replace('each.', '');
+      var segments = clean.split('.');
+      var first_segment = segments[0];
+      var subsequent_segment = segments.splice(1, segments.length).join('.');
+      var each_items = this.singleQuery(first_segment);
+      var result = each_items.map(function (item_source) {
+        return _this.singleQuery("item.".concat(subsequent_segment), {
+          item: [item_source]
+        });
+      });
+      return result;
+    }
+  }, {
     key: "multiQuery",
     value: function multiQuery(segment, method) {
-      var _this = this;
+      var _this2 = this;
 
       var queries = segment.split(',').map(function (s) {
         return s.replace("".concat(method, "(["), '').replace('])', '').trim();
       }).map(function (q) {
         // If number rather than query then just return
         if (!isNaN(parseInt(q))) return round(q, 2);
-        return _this.singleQuery(q);
+        return _this2.singleQuery(q);
       });
 
       if (queries.filter(function (q) {
@@ -7240,9 +7263,9 @@ function () {
     }
   }, {
     key: "singleQuery",
-    value: function singleQuery(segment) {
+    value: function singleQuery(segment, amended_source) {
       // Clone source object
-      var result = _objectSpread({}, this.source);
+      var result = _objectSpread({}, amended_source ? amended_source : this.source);
 
       var elements = segment.split('.'); // Return object
 
@@ -7280,6 +7303,12 @@ function () {
         var _results2 = this.multiQuery(segment, 'range');
 
         return max(_results2) - min(_results2) || 0;
+      }
+
+      if (segment.startsWith('each.')) {
+        var _results3 = this.eachQuery(segment, 'each');
+
+        return _results3;
       }
 
       return this.singleQuery(segment);
@@ -7332,7 +7361,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63581" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57415" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

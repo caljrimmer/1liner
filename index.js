@@ -47,6 +47,7 @@ const operators = [
     'range',
     'unique',
     'exists',
+    'default',
 ];
 
 /**
@@ -101,7 +102,7 @@ function __recursive(obj = {}, el = '', nextEl, segment) {
 
     // Check element is array and next element is an operator
     if(__checkOperator(nextEl)) {
-        if (!isArray(obj[el]) && !isArray(obj) && nextEl !=='exists()') {
+        if (!isArray(obj[el]) && !isArray(obj) && nextEl !=='exists()' && !nextEl.includes('default(')) {
             throw new Error(`Path error: no object exists at ${el} (in ${segment}`);
         } 
     } else {
@@ -177,6 +178,11 @@ function __recursive(obj = {}, el = '', nextEl, segment) {
 
     if (nextEl.includes('range(')) {
         return (max(newObj) - min(newObj) || 0);
+    }
+
+    if (nextEl.includes('default(')) {
+        const def = __getOperatorValue(nextEl, segment);
+        return newObj || (isNaN(parseFloat(def)) ? cleanStringQuotes(def) : parseFloat(def));
     }
 }
 

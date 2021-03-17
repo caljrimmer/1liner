@@ -320,6 +320,32 @@ obj.query('proposer.spouse.exists()'); // "false"
 obj.query('proposer.title.exists()'); // "true"
 ```
 
+### - default
+
+If property is undefined then it will return a defined default number or string
+
+Example:
+
+```javascript
+const L = require('1liner');
+
+const obj = new L({
+    proposer: {
+        title: "MR",
+        first_names: "John",
+        middle_name: "",
+        last_names: "Smith",
+        age: 0,
+        spouse: null
+    }    
+});
+
+obj.query('proposer.country.default(GB)'); // "GB"
+obj.query('proposer.country.default("GB")'); // "GB"
+obj.query('proposer.height.default(1.80)'); // 180
+obj.query('proposer.first_names.default("bob")'); // "John"
+```
+
 ### Multiple Queries
 
 Returns an result from multiple queries. The queries need to return numbers as values otherwise an error with be thrown. The queries can be replaced with numbers too.

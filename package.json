@@ -1,6 +1,6 @@
 {
   "name": "1liner",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Query JSON with one line of code.",
   "main": "index.js",
   "scripts": {

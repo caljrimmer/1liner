@@ -191,18 +191,38 @@ describe('1Liner', () => {
             expect(result).toEqual(0);
         });
 
-        it('PASS - max for [] is 5 with no default', async () => {
+        it('PASS - max for [] is 5 with default', async () => {
             const result = L.query('additional_drivers.filter(title="MRS").map(ncd).max(5)');
             expect(result).toEqual(5);
         });
 
-        it('PASS - min for [] is 5 with no default', async () => {
+        it('PASS - min for [] is 5 with default', async () => {
             const result = L.query(`additional_drivers.filter(title='MRS').map(ncd).min(5)`);
             expect(result).toEqual(5);
         });
 
-        it('PASS - mean for [] is 5 with no default', async () => {
+        it('PASS - mean for [] is 5 with default', async () => {
             const result = L.query('additional_drivers.filter(title=MRS).map(ncd).mean(5)');
+            expect(result).toEqual(5);
+        });
+
+        it('PASS - default is 5 if undefined', async () => {
+            const result = L.query('proposer.unknown.default(5)');
+            expect(result).toEqual(5);
+        });
+
+        it('PASS - default is "str" if undefined', async () => {
+            const result = L.query('proposer.unknown.default(str)');
+            expect(result).toEqual('str');
+        });
+
+        it('PASS - default is "str" if undefined', async () => {
+            const result = L.query('proposer.unknown.default("str")');
+            expect(result).toEqual('str');
+        });
+
+        it('PASS - default is ignored if defined', async () => {
+            const result = L.query('proposer.ncd.default(-1)');
             expect(result).toEqual(5);
         });
     });
