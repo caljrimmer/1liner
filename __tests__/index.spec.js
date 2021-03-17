@@ -225,6 +225,7 @@ describe('1Liner', () => {
             const result = L.query('proposer.ncd.default(-1)');
             expect(result).toEqual(5);
         });
+        
     });
 
     describe('Evaluate Multiple Querys', () => {

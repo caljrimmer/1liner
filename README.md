@@ -342,7 +342,7 @@ const obj = new L({
 
 obj.query('proposer.country.default(GB)'); // "GB"
 obj.query('proposer.country.default("GB")'); // "GB"
-obj.query('proposer.height.default(1.80)'); // 180
+obj.query('proposer.height.default(180)'); // 180
 obj.query('proposer.first_names.default("bob")'); // "John"
 ```
 
