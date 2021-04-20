@@ -225,6 +225,21 @@ describe('1Liner', () => {
             const result = L.query('proposer.ncd.default(-1)');
             expect(result).toEqual(5);
         });
+
+        it('PASS - default works if result is 0 with min', async () => {
+            const result = L.query('additional_drivers.map(children).min(99)');
+            expect(result).toEqual(0);
+        });
+
+        it('PASS - default works if result is 0 with max', async () => {
+            const result = L.query('additional_drivers.map(children).max(99)');
+            expect(result).toEqual(0);
+        });
+
+        it('PASS - default works if result is 0 with default', async () => {
+            const result = L.query('proposer.children.default(99)');
+            expect(result).toEqual(0);
+        });
         
     });
 

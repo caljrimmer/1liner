@@ -163,16 +163,19 @@ function __recursive(obj = {}, el = '', nextEl, segment) {
 
     if (nextEl.includes('mean(')) {
         const def =__getOperatorValue(nextEl, segment);
+        if (mean(newObj) === 0) return 0;
         return round(mean(newObj), 2) || (def ? parseFloat(def) : 0);
     }
 
     if (nextEl.includes('min(')) {
         const def = __getOperatorValue(nextEl, segment);
+        if (min(newObj) === 0) return 0;
         return min(newObj) || (def ? parseFloat(def) : 0);
     }
 
     if (nextEl.includes('max(')) {
         const def = __getOperatorValue(nextEl, segment);
+        if (max(newObj) === 0) return 0;
         return max(newObj) || (def ? parseFloat(def) : 0);
     }
 
@@ -182,6 +185,7 @@ function __recursive(obj = {}, el = '', nextEl, segment) {
 
     if (nextEl.includes('default(')) {
         const def = __getOperatorValue(nextEl, segment);
+        if (newObj === 0) return 0;
         return newObj || (isNaN(parseFloat(def)) ? cleanStringQuotes(def) : parseFloat(def));
     }
 }
