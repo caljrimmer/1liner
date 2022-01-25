@@ -1,12 +1,16 @@
 const Oneliner = require('../index');
+
 const { times, random } = require('lodash');
 
 const quote = require('../__mocks__/quote.json');
 
 const bigQuote = {};
+
 times(1000, (i) => {
     bigQuote[`quote_${i}`] = quote;
 });
+
+
 
 const L = new Oneliner(quote);
 
@@ -292,56 +296,6 @@ describe('1Liner', () => {
         it('PASS - additional_drivers.map(claims).filter(code=W).map(code)', async () => {
             const result = L.query('additional_drivers.map(claims).filter(code=W).map(code)');
             expect(result).toEqual(['W']);
-        });
-    });
-
-    describe('Load Test - Small 1 Quote (2.5KB) - 10000 executions in ms', () => {
-        it('get object', async () => {
-            const start = performance.now();
-            const L = new Oneliner(quote);
-            times(10000, () => {
-                L.query('proposer.ncd');
-                L.query('policy.address.postcode');
-                L.query('vehicle.rating');
-            });
-            const end = performance.now();
-            expect(end - start).toBeLessThan(500);
-        });
-        it('filter, sum, map', async () => {
-            const start = performance.now();
-            const L = new Oneliner(quote);
-            times(10000, () => {
-                L.query('additional_drivers.map(claims)');
-                L.query('additional_drivers.map(claims).filter(code=W)');
-                L.query('additional_drivers.map(convictions).sum(points)');
-            });
-            const end = performance.now();
-            expect(end - start).toBeLessThan(500);
-        });
-    });
-
-    describe('Load Test - Big 1000 Quotes (2.5MB) - 100 executions in ms', () => {
-        it('get object', async () => {
-            const start = performance.now();
-            const L = new Oneliner(bigQuote);
-            times(1000, () => {
-                L.query(`quote_${random(1, 999)}.proposer.ncd`);
-                L.query(`quote_${random(1, 999)}.policy.address.postcode`);
-                L.query(`quote_${random(1, 999)}.vehicle.rating`);
-            });
-            const end = performance.now();
-            expect(end - start).toBeLessThan(5000);
-        });
-        it('filter, sum, map', async () => {
-            const start = performance.now();
-            const L = new Oneliner(bigQuote);
-            times(1000, () => {
-                L.query(`quote_${random(1, 999)}.additional_drivers.map(claims)`);
-                L.query(`quote_${random(1, 999)}.additional_drivers.map(claims).filter(code=W)`);
-                L.query(`quote_${random(1, 999)}.additional_drivers.map(convictions).sum(points)`);
-            });
-            const end = performance.now();
-            expect(end - start).toBeLessThan(5000);
         });
     });
     
