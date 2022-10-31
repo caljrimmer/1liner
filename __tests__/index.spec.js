@@ -138,6 +138,109 @@ describe('1Liner', () => {
             const result = L.query('policy.address.line_1.exists()');
             expect(result).toEqual('false');
         });
+
+        it('PASS - date YY', async () => {
+            const result = L.query('proposer.dob.date(YY)');
+            expect(result).toEqual(2000);
+        });
+
+        it('FAIL - bad date', async () => {
+            try {
+                const result = L.query('policy.error_date.date(YY)');
+            } catch(e) {
+                expect(e.message).toEqual('Date error: in policy.error_date.date(YY)) the value is not a valid date');
+            }
+        });
+
+        it('FAIL - date XX', async () => {
+            try {
+                const result = L.query('proposer.dob.date(XX)');
+            } catch(e) {
+                expect(e.message).toEqual('Date error: in proposer.dob.date(XX)) should be followed by eligible formatter i.e. YY, MM, DD, HH');
+            }
+        });
+
+        it('PASS - date MM', async () => {
+            const result = L.query('proposer.dob.date(MM)');
+            expect(result).toEqual(7);
+        });
+
+        it('PASS - date DD', async () => {
+            const result = L.query('proposer.dob.date(DD)');
+            expect(result).toEqual(29);
+        });
+
+        it('PASS - date HH', async () => {
+            const result = L.query('proposer.dob.date(HH)');
+            expect(result).toEqual(0);
+        });
+
+        it('PASS - age YY', async () => {
+            // This normalise the tests
+            const inception = L.query('policy.inception_date.age(YY)');
+            const age = L.query('proposer.dob.age(YY)');
+            const result = Math.floor(age - inception);
+            expect(result).toEqual(20);
+        });
+
+        it('PASS - age YY accurate', async () => {
+            // This normalise the tests
+            const inception = L.query('policy.inception_date.age(DD)');
+            const age = L.query('proposer.dob.age(DD)');
+            const result = Math.floor((age - inception) / 365.25);
+            expect(result).toEqual(19);
+        });
+
+        it('PASS - age MM', async () => {
+            // This normalise the tests
+            const inception = L.query('policy.inception_date.age(MM)');
+            const age = L.query('proposer.dob.age(MM)');
+            const result = Math.floor(age - inception);
+            expect(result).toEqual(234);
+        });
+
+        it('PASS - age DD', async () => {
+            // This normalise the tests
+            const inception = L.query('policy.inception_date.age(DD)');
+            const age = L.query('proposer.dob.age(DD)');
+            const result = Math.floor(age - inception);
+            expect(result).toEqual(7099);
+        });
+
+        it('PASS - age HH', async () => {
+            // This normalise the tests
+            const inception = L.query('policy.inception_date.age(HH)');
+            const age = L.query('proposer.dob.age(HH)');
+            const result = Math.floor(age - inception);
+            expect(result).toEqual(170376);
+        });
+
+        it('PASS - regex postcode', async () => {
+            const result = L.query('policy.address.postcode.regex(^[A-Za-z]{2}|^[A-Za-z]{1})');
+            expect(result).toEqual('AB');
+        });
+
+        it('FAIL - bad regex postcode', async () => {
+            const result = L.query('policy.address.postcode.regex(~~~~)');
+            expect(result).toEqual('');
+        });
+
+        it('FAIL - property not a string', async () => {
+            try {
+                const result = L.query('proposer.children.regex(^[A-Za-z]{2}|^[A-Za-z]{1})');
+            } catch(e) {
+                expect(e.message).toEqual('Type error: in proposer.children.regex(^[A-Za-z]{2}|^[A-Za-z]{1})) the value is not a string');
+            }
+        });
+
+        it('FAIL - property is an array', async () => {
+            try {
+                const result = L.query('proposer.claims.regex(^[A-Za-z]{2}|^[A-Za-z]{1})');
+            } catch(e) {
+                expect(e.message).toEqual('Type error: in proposer.claims.regex(^[A-Za-z]{2}|^[A-Za-z]{1})) the value is not a string');
+            }
+        });
+
     });
     
     describe('Array first', () => {
@@ -178,6 +281,11 @@ describe('1Liner', () => {
 
         it('PASS - filter = boolean', async () => {
             const result = L.query('additional_drivers.filter(medical_informed_dvla=true).count()');
+            expect(result).toEqual(1)
+        });
+
+        it('PASS - filter = boolean', async () => {
+            const result = L.query('additional_drivers.filter(medical_informed_dvla=false).count()');
             expect(result).toEqual(1)
         });
 
@@ -297,8 +405,8 @@ describe('1Liner', () => {
 
     describe('Load Test - Small 1 Quote (2.5KB) - 10000 executions in ms', () => {
         it('get object', async () => {
-            const start = performance.now();
             const L = new Oneliner(quote);
+            const start = performance.now();
             times(10000, () => {
                 L.query('proposer.ncd');
                 L.query('policy.address.postcode');
@@ -308,8 +416,8 @@ describe('1Liner', () => {
             expect(end - start).toBeLessThan(500);
         });
         it('filter, sum, map', async () => {
-            const start = performance.now();
             const L = new Oneliner(quote);
+            const start = performance.now();
             times(10000, () => {
                 L.query('additional_drivers.map(claims)');
                 L.query('additional_drivers.map(claims).filter(code=W)');
@@ -322,8 +430,8 @@ describe('1Liner', () => {
 
     describe('Load Test - Big 1000 Quotes (2.5MB) - 100 executions in ms', () => {
         it('get object', async () => {
-            const start = performance.now();
             const L = new Oneliner(bigQuote);
+            const start = performance.now();
             times(1000, () => {
                 L.query(`quote_${random(1, 999)}.proposer.ncd`);
                 L.query(`quote_${random(1, 999)}.policy.address.postcode`);
@@ -333,8 +441,8 @@ describe('1Liner', () => {
             expect(end - start).toBeLessThan(5000);
         });
         it('filter, sum, map', async () => {
-            const start = performance.now();
             const L = new Oneliner(bigQuote);
+            const start = performance.now();
             times(1000, () => {
                 L.query(`quote_${random(1, 999)}.additional_drivers.map(claims)`);
                 L.query(`quote_${random(1, 999)}.additional_drivers.map(claims).filter(code=W)`);

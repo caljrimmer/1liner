@@ -15,7 +15,8 @@
         "county": "Gloucestershire",
         "country": "GB"
       },
-      "inception_date": "2020-01-05"
+      "inception_date": "2020-01-05",
+      "error_date": "fail_string"
     },
     "vehicle": {
       "make": "MAZDA",

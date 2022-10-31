@@ -48,6 +48,9 @@ const operators = [
     'unique',
     'exists',
     'default',
+    'age',
+    'date',
+    'regex',
 ];
 
 /**
@@ -102,7 +105,14 @@ function __recursive(obj = {}, el = '', nextEl, segment) {
 
     // Check element is array and next element is an operator
     if(__checkOperator(nextEl)) {
-        if (!isArray(obj[el]) && !isArray(obj) && nextEl !=='exists()' && !nextEl.includes('default(')) {
+        if (!isArray(obj[el]) && 
+            !isArray(obj) && 
+            nextEl !=='exists()' && 
+            !nextEl.includes('default(') &&
+            !nextEl.includes('age(') &&
+            !nextEl.includes('date(') &&
+            !nextEl.includes('regex(')
+        ) {
             throw new Error(`Path error: no object exists at ${el} (in ${segment}`);
         } 
     } else {
@@ -159,6 +169,96 @@ function __recursive(obj = {}, el = '', nextEl, segment) {
 
     if (nextEl.includes('exists(')) {
         return (newObj === '' || newObj === 0 || newObj === null || newObj === undefined).toString();
+    }
+
+    if (nextEl.includes('date(') || nextEl.includes('age(')) {
+        const def = __getOperatorValue(nextEl, segment);
+
+        let format = def;
+
+        if(!['YY', 'MM', 'DD', 'HH'].includes(format)) {
+            throw new Error(`Date error: in ${segment}) should be followed by eligible formatter i.e. YY, MM, DD, HH`); 
+        }
+
+        let date;
+
+        try {
+            date = new Date(newObj)
+            if (date instanceof Date && !isNaN(date)) {
+                date = new Date(newObj)
+            } else {
+                throw new Error(`Date error: in ${segment}) the value is not a valid date`); 
+            }
+        } catch(e) {
+            throw new Error(`Date error: in ${segment}) the value is not a valid date`); 
+        }
+
+        let result;
+
+        if (nextEl.includes('date(')) {
+            if (format === 'YY') {
+                result = date.getUTCFullYear();
+            } else if (format === 'MM') {
+                result = date.getUTCMonth() + 1;
+            } else if (format === 'DD') {
+                result = date.getUTCDate();
+            } else if (format === 'HH') {
+                result = date.getUTCHours();
+            } else {
+                result = 0;
+            }
+        } else {
+
+            const now = new Date();
+
+            const diff = (now.getTime() - date.getTime());
+
+            const YY = Math.abs(new Date(diff).getUTCFullYear() - 1970); 
+
+            const months = (YY * 12)
+            const additional_month = new Date(
+                now.getTime() - 
+                (
+                    new Date(
+                        now.getUTCFullYear() + 
+                        '-' + 
+                        (date.getUTCMonth() + 1) + 
+                        '-' + 
+                        date.getUTCDate()
+                    ) 
+                )
+            ).getUTCMonth();
+
+            const MM = months + additional_month;
+            const DD = Math.floor(diff/ 1000 / (24 * 3600));
+            const HH = DD * 24;
+
+            if (format === 'DD') {
+                result = DD;
+            } else if (format === 'MM') {
+                result = MM;
+            } else if (format === 'YY') {
+                result = YY;
+            } else if (format === 'HH') {
+                result = HH;
+            } else {
+                result = 0;
+            }
+        }
+
+        return result;
+    }
+
+    if (nextEl.includes('regex(')) {
+        const def =__getOperatorValue(nextEl, segment);
+        let result;
+        try {
+            result = newObj.match(def);
+        } catch (e) {
+            throw new Error(`Type error: in ${segment}) the value is not a string`); 
+        
+        }
+        return result && result.length ? result[0] : '';
     }
 
     if (nextEl.includes('mean(')) {

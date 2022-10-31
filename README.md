@@ -346,6 +346,58 @@ obj.query('proposer.height.default(180)'); // 180
 obj.query('proposer.first_names.default("bob")'); // "John"
 ```
 
+### date, age
+
+If property is a date, then you can use date() to find a hour, date, month or year from the date string, or use age() to find the age since now in hours, days, months or years.
+
+Example:
+
+```javascript
+const L = require('1liner');
+
+const obj = new L({
+    proposer: {
+        title: "MR",
+        first_names: "John",
+        dob: "1990-01-01"
+    }    
+});
+
+obj.query('proposer.dob.date(YY)'); // 1990
+obj.query('proposer.dob.date(MM)'); // 1
+obj.query('proposer.dob.date(DD)'); // 1
+obj.query('proposer.dob.date(HH)'); // 0
+
+//assuming now is 2022-01-01
+
+obj.query('proposer.dob.age(YY)'); // 32
+obj.query('proposer.dob.age(MM)'); // 384
+obj.query('proposer.dob.age(DD)'); // 140160
+obj.query('proposer.dob.age(HH)'); // 3363840
+```
+
+### regex
+
+If property is a string, then you can use regex() to parse a regular expression against the string and return the first match.
+
+Example:
+
+```javascript
+const L = require('1liner');
+
+const obj = new L({
+    proposer: {
+        title: "MR",
+        first_names: "John",
+        home_postcode: "W64TR",
+        shipping_postcode: "PO314RT"
+    }    
+});
+
+obj.query('proposer.home_postcode.regex(^[A-Za-z]{2}|^[A-Za-z]{1})'); // W
+obj.query('proposer.shipping_postcode.regex(^[A-Za-z]{2}|^[A-Za-z]{1})'); // PO
+```
+
 ### Multiple Queries
 
 Returns an result from multiple queries. The queries need to return numbers as values otherwise an error with be thrown. The queries can be replaced with numbers too.
@@ -457,7 +509,6 @@ Bundling
 npm run bundle
 npm publish
 ```
-
 
 Contributions
 -------------

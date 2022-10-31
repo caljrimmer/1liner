@@ -7184,18 +7184,21 @@ function __recursive() {
   if (nextEl.includes('mean(')) {
     var def = __getOperatorValue(nextEl, segment);
 
+    if (mean(newObj) === 0) return 0;
     return round(mean(newObj), 2) || (def ? parseFloat(def) : 0);
   }
 
   if (nextEl.includes('min(')) {
     var _def = __getOperatorValue(nextEl, segment);
 
+    if (min(newObj) === 0) return 0;
     return min(newObj) || (_def ? parseFloat(_def) : 0);
   }
 
   if (nextEl.includes('max(')) {
     var _def2 = __getOperatorValue(nextEl, segment);
 
+    if (max(newObj) === 0) return 0;
     return max(newObj) || (_def2 ? parseFloat(_def2) : 0);
   }
 
@@ -7206,6 +7209,7 @@ function __recursive() {
   if (nextEl.includes('default(')) {
     var _def3 = __getOperatorValue(nextEl, segment);
 
+    if (newObj === 0) return 0;
     return newObj || (isNaN(parseFloat(_def3)) ? cleanStringQuotes(_def3) : parseFloat(_def3));
   }
 }
@@ -7361,7 +7365,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57415" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60594" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
