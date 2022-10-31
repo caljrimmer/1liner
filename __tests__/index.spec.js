@@ -1,12 +1,16 @@
 const Oneliner = require('../index');
+
 const { times, random } = require('lodash');
 
 const quote = require('../__mocks__/quote.json');
 
 const bigQuote = {};
+
 times(1000, (i) => {
     bigQuote[`quote_${i}`] = quote;
 });
+
+
 
 const L = new Oneliner(quote);
 

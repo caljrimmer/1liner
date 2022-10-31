@@ -1,7 +1,5 @@
 1Liner
 =======
-
-[![build status](https://secure.travis-ci.org/caljrimmer/1liner.png)](https://travis-ci.com/caljrimmer/1liner)
 [![version](https://img.shields.io/github/package-json/v/caljrimmer/1liner)](https://github.com/caljrimmer/1liner/blob/master/package.json)
 [![downloads](https://img.shields.io/npm/dm/1liner)](https://www.npmjs.com/package/1liner)
 
