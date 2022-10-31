@@ -366,13 +366,65 @@ obj.query('proposer.dob.date(MM)'); // 1
 obj.query('proposer.dob.date(DD)'); // 1
 obj.query('proposer.dob.date(HH)'); // 0
 
-//assuming now is 2022-01-01
+//assuming the date now is 2022-01-01
 
 obj.query('proposer.dob.age(YY)'); // 32
 obj.query('proposer.dob.age(MM)'); // 384
 obj.query('proposer.dob.age(DD)'); // 140160
 obj.query('proposer.dob.age(HH)'); // 3363840
 ```
+
+A second argument can be provided to point at a date in the object instead of using now. This must be a top-level key in the object.
+
+```javascript
+const L = require('1liner');
+
+const obj = new L({
+    created_at: '2022-01-01',
+    proposer: {
+        title: "MR",
+        first_names: "John",
+        dob: "1990-01-01"
+    }    
+});
+
+obj.query('proposer.dob.age(YY, created_at)'); // 32
+obj.query('proposer.dob.age(MM, created_at)'); // 384
+obj.query('proposer.dob.age(DD, created_at)'); // 140160
+obj.query('proposer.dob.age(HH, created_at)'); // 3363840
+```
+
+Date and age work with arrays.
+
+```javascript
+const L = require('1liner');
+
+const obj = new L({
+    created_at: '2022-01-01',
+    proposer: {
+        title: "MR",
+        first_names: "John",
+        dob: "1990-01-01",
+        convictions: [{
+            code: "SP50",
+            points: 4,
+            date: "2019-01-01",
+        },
+        {
+            code: "SP30",
+            points: 2,
+            date: "2020-01-01",
+        }]
+    }    
+});
+
+obj.query('proposer.convictions.map(date).age(YY, created_at)'); // [ 3 , 2 ]
+obj.query('proposer.convictions.map(date).age(MM, created_at)'); // [ 36 , 24 ]
+obj.query('proposer.convictions.map(date).age(DD, created_at)'); // [ 1095 , 730 ]
+
+```
+
+
 
 ### - regex
 

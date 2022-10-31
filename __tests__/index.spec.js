@@ -181,42 +181,51 @@ describe('1Liner', () => {
 
         it('PASS - age YY', async () => {
             // This normalise the tests
-            const inception = L.query('policy.inception_date.age(YY)');
+            const inception = L.query('created_at.age(YY)');
             const age = L.query('proposer.dob.age(YY)');
             const result = Math.floor(age - inception);
             expect(result).toEqual(20);
         });
 
-        it('PASS - age YY accurate', async () => {
-            // This normalise the tests
-            const inception = L.query('policy.inception_date.age(DD)');
-            const age = L.query('proposer.dob.age(DD)');
-            const result = Math.floor((age - inception) / 365.25);
+        it('PASS - age YY with top-level date pointer', async () => {
+            const result = L.query('proposer.dob.age(YY, created_at)');
             expect(result).toEqual(19);
         });
 
         it('PASS - age MM', async () => {
-            // This normalise the tests
-            const inception = L.query('policy.inception_date.age(MM)');
+            const inception = L.query('created_at.age(MM)');
             const age = L.query('proposer.dob.age(MM)');
             const result = Math.floor(age - inception);
             expect(result).toEqual(234);
         });
 
+        it('PASS - age MM with top-level date pointer', async () => {
+            const result = L.query('proposer.dob.age(MM, created_at)');
+            expect(result).toEqual(233);
+        });
+
         it('PASS - age DD', async () => {
-            // This normalise the tests
-            const inception = L.query('policy.inception_date.age(DD)');
+            const inception = L.query('created_at.age(DD)');
             const age = L.query('proposer.dob.age(DD)');
             const result = Math.floor(age - inception);
-            expect(result).toEqual(7099);
+            expect(result).toEqual(7095);
+        });
+
+        it('PASS - age DD with top-level date pointer', async () => {
+            const result = L.query('proposer.dob.age(DD, created_at)');
+            expect(result).toEqual(7095);
         });
 
         it('PASS - age HH', async () => {
-            // This normalise the tests
-            const inception = L.query('policy.inception_date.age(HH)');
+            const inception = L.query('created_at.age(HH)');
             const age = L.query('proposer.dob.age(HH)');
             const result = Math.floor(age - inception);
-            expect(result).toEqual(170376);
+            expect(result).toEqual(170280);
+        });
+
+        it('PASS - age HH with top-level date pointer', async () => {
+            const result = L.query('proposer.dob.age(HH, created_at)');
+            expect(result).toEqual(170280);
         });
 
         it('PASS - regex postcode', async () => {
@@ -351,6 +360,16 @@ describe('1Liner', () => {
         it('PASS - default works if result is 0 with default', async () => {
             const result = L.query('proposer.children.default(99)');
             expect(result).toEqual(0);
+        });
+
+        it('PASS - age MM with top-level date pointer', async () => {
+            const result = L.query('proposer.convictions.map(date).age(MM, created_at)');
+            expect(result).toEqual([ 53, 24, 17]);
+        });
+
+        it('PASS - date MM', async () => {
+            const result = L.query('proposer.convictions.map(date).date(MM)');
+            expect(result).toEqual([ 7, 12, 7]);
         });
         
     });

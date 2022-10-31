@@ -99,7 +99,7 @@ function cleanStringQuotes(str = '') {
     return str.replace(/"/g, '').replace(/'/g, '');
 }
 
-function __recursive(obj = {}, el = '', nextEl, segment) {
+function __recursive(obj = {}, el = '', nextEl, segment, source) {
     if(!nextEl) return obj;
     const newObj = isArray(obj) ? obj : obj[el];
 
@@ -173,80 +173,98 @@ function __recursive(obj = {}, el = '', nextEl, segment) {
 
     if (nextEl.includes('date(') || nextEl.includes('age(')) {
         const def = __getOperatorValue(nextEl, segment);
-
-        let format = def;
+        const format = (def.split(',')[0] || '').trim();
+        const defined_date_path = (def.split(',')[1] || '').trim();
 
         if(!['YY', 'MM', 'DD', 'HH'].includes(format)) {
             throw new Error(`Date error: in ${segment}) should be followed by eligible formatter i.e. YY, MM, DD, HH`); 
         }
 
-        let date;
+        function __generateDate(date_str) {
 
-        try {
-            date = new Date(newObj)
-            if (date instanceof Date && !isNaN(date)) {
-                date = new Date(newObj)
-            } else {
-                throw new Error(`Date error: in ${segment}) the value is not a valid date`); 
+            function __checkDate(value) {
+                let date;
+                try {
+                    date = new Date(value)
+                    if (date instanceof Date && !isNaN(date)) {
+                        date = new Date(value)
+                    } else {
+                        throw new Error(`Date error: in ${segment}) the value is not a valid date`); 
+                    }
+                } catch(e) {
+                    throw new Error(`Date error: in ${segment}) the value is not a valid date`); 
+                }
+                return date
             }
-        } catch(e) {
-            throw new Error(`Date error: in ${segment}) the value is not a valid date`); 
+
+            const date = __checkDate(date_str);
+            let now;
+
+            if (defined_date_path) {
+                // This only works will parent keys (i.e. top-level)
+                const found_date = get(source, defined_date_path);
+                now = __checkDate(found_date);
+            } else {
+                now = new Date(); 
+            }
+            let result;
+
+            if (nextEl.includes('date(')) {
+                if (format === 'YY') {
+                    result = date.getUTCFullYear();
+                } else if (format === 'MM') {
+                    result = date.getUTCMonth() + 1;
+                } else if (format === 'DD') {
+                    result = date.getUTCDate();
+                } else if (format === 'HH') {
+                    result = date.getUTCHours();
+                } else {
+                    result = 0;
+                }
+            } else {
+
+                const diff = (now.getTime() - date.getTime());
+                const YY = Math.abs(new Date(diff).getUTCFullYear() - 1970); 
+
+                const months = (YY * 12);
+                const additional_month = new Date(
+                    now.getTime() - 
+                    (
+                        new Date(
+                            now.getUTCFullYear() + 
+                            '-' + 
+                            (date.getUTCMonth() + 1) + 
+                            '-' + 
+                            date.getUTCDate()
+                        ) 
+                    )
+                ).getUTCMonth();
+
+                const MM = months + additional_month;
+                const DD = Math.floor(diff/ 1000 / (24 * 3600));
+                const HH = DD * 24;
+
+                if (format === 'DD') {
+                    result = DD;
+                } else if (format === 'MM') {
+                    result = MM;
+                } else if (format === 'YY') {
+                    result = YY;
+                } else if (format === 'HH') {
+                    result = HH;
+                } else {
+                    result = 0;
+                }
+            }
+            return result;
         }
 
-        let result;
-
-        if (nextEl.includes('date(')) {
-            if (format === 'YY') {
-                result = date.getUTCFullYear();
-            } else if (format === 'MM') {
-                result = date.getUTCMonth() + 1;
-            } else if (format === 'DD') {
-                result = date.getUTCDate();
-            } else if (format === 'HH') {
-                result = date.getUTCHours();
-            } else {
-                result = 0;
-            }
+        if (isArray(newObj)) {
+            return newObj.map(n => __generateDate(n));
         } else {
-
-            const now = new Date();
-
-            const diff = (now.getTime() - date.getTime());
-
-            const YY = Math.abs(new Date(diff).getUTCFullYear() - 1970); 
-
-            const months = (YY * 12)
-            const additional_month = new Date(
-                now.getTime() - 
-                (
-                    new Date(
-                        now.getUTCFullYear() + 
-                        '-' + 
-                        (date.getUTCMonth() + 1) + 
-                        '-' + 
-                        date.getUTCDate()
-                    ) 
-                )
-            ).getUTCMonth();
-
-            const MM = months + additional_month;
-            const DD = Math.floor(diff/ 1000 / (24 * 3600));
-            const HH = DD * 24;
-
-            if (format === 'DD') {
-                result = DD;
-            } else if (format === 'MM') {
-                result = MM;
-            } else if (format === 'YY') {
-                result = YY;
-            } else if (format === 'HH') {
-                result = HH;
-            } else {
-                result = 0;
-            }
+            return __generateDate(newObj);
         }
 
-        return result;
     }
 
     if (nextEl.includes('regex(')) {
@@ -344,7 +362,7 @@ class L {
         // Traverse object
         elements.forEach((el, i) => {
             const nextEl = elements[(i + 1)];
-            result = __recursive(result, el, nextEl, segment);
+            result = __recursive(result, el, nextEl, segment, this.source);
         });
         if (isUndefined(result)) throw new Error(`Path error: No object path for ${segment}`);
         return result;
