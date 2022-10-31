@@ -344,7 +344,7 @@ obj.query('proposer.height.default(180)'); // 180
 obj.query('proposer.first_names.default("bob")'); // "John"
 ```
 
-### date, age
+### - date, age
 
 If property is a date, then you can use date() to find a hour, date, month or year from the date string, or use age() to find the age since now in hours, days, months or years.
 
@@ -374,7 +374,7 @@ obj.query('proposer.dob.age(DD)'); // 140160
 obj.query('proposer.dob.age(HH)'); // 3363840
 ```
 
-### regex
+### - regex
 
 If property is a string, then you can use regex() to parse a regular expression against the string and return the first match.
 

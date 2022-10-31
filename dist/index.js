@@ -7034,7 +7034,7 @@ var equators = ['=', '!=', '>', '>=', '<', '<='];
  * Define array operators
  */
 
-var operators = ['count', 'map', 'filter', 'sum', 'mean', 'min', 'max', 'range', 'unique', 'exists', 'default'];
+var operators = ['count', 'map', 'filter', 'sum', 'mean', 'min', 'max', 'range', 'unique', 'exists', 'default', 'age', 'date', 'regex'];
 /**
  * Private functions
  */
@@ -7106,7 +7106,7 @@ function __recursive() {
   var newObj = isArray(obj) ? obj : obj[el]; // Check element is array and next element is an operator
 
   if (__checkOperator(nextEl)) {
-    if (!isArray(obj[el]) && !isArray(obj) && nextEl !== 'exists()' && !nextEl.includes('default(')) {
+    if (!isArray(obj[el]) && !isArray(obj) && nextEl !== 'exists()' && !nextEl.includes('default(') && !nextEl.includes('age(') && !nextEl.includes('date(') && !nextEl.includes('regex(')) {
       throw new Error("Path error: no object exists at ".concat(el, " (in ").concat(segment));
     }
   } else {
@@ -7181,25 +7181,102 @@ function __recursive() {
     return (newObj === '' || newObj === 0 || newObj === null || newObj === undefined).toString();
   }
 
-  if (nextEl.includes('mean(')) {
+  if (nextEl.includes('date(') || nextEl.includes('age(')) {
     var def = __getOperatorValue(nextEl, segment);
 
+    var format = def;
+
+    if (!['YY', 'MM', 'DD', 'HH'].includes(format)) {
+      throw new Error("Date error: in ".concat(segment, ") should be followed by eligible formatter i.e. YY, MM, DD, HH"));
+    }
+
+    var date;
+
+    try {
+      date = new Date(newObj);
+
+      if (date instanceof Date && !isNaN(date)) {
+        date = new Date(newObj);
+      } else {
+        throw new Error("Date error: in ".concat(segment, ") the value is not a valid date"));
+      }
+    } catch (e) {
+      throw new Error("Date error: in ".concat(segment, ") the value is not a valid date"));
+    }
+
+    var result;
+
+    if (nextEl.includes('date(')) {
+      if (format === 'YY') {
+        result = date.getUTCFullYear();
+      } else if (format === 'MM') {
+        result = date.getUTCMonth() + 1;
+      } else if (format === 'DD') {
+        result = date.getUTCDate();
+      } else if (format === 'HH') {
+        result = date.getUTCHours();
+      } else {
+        result = 0;
+      }
+    } else {
+      var now = new Date();
+      var diff = now.getTime() - date.getTime();
+      var YY = Math.abs(new Date(diff).getUTCFullYear() - 1970);
+      var months = YY * 12;
+      var additional_month = new Date(now.getTime() - new Date(now.getUTCFullYear() + '-' + (date.getUTCMonth() + 1) + '-' + date.getUTCDate())).getUTCMonth();
+      var MM = months + additional_month;
+      var DD = Math.floor(diff / 1000 / (24 * 3600));
+      var HH = DD * 24;
+
+      if (format === 'DD') {
+        result = DD;
+      } else if (format === 'MM') {
+        result = MM;
+      } else if (format === 'YY') {
+        result = YY;
+      } else if (format === 'HH') {
+        result = HH;
+      } else {
+        result = 0;
+      }
+    }
+
+    return result;
+  }
+
+  if (nextEl.includes('regex(')) {
+    var _def = __getOperatorValue(nextEl, segment);
+
+    var _result;
+
+    try {
+      _result = newObj.match(_def);
+    } catch (e) {
+      throw new Error("Type error: in ".concat(segment, ") the value is not a string"));
+    }
+
+    return _result && _result.length ? _result[0] : '';
+  }
+
+  if (nextEl.includes('mean(')) {
+    var _def2 = __getOperatorValue(nextEl, segment);
+
     if (mean(newObj) === 0) return 0;
-    return round(mean(newObj), 2) || (def ? parseFloat(def) : 0);
+    return round(mean(newObj), 2) || (_def2 ? parseFloat(_def2) : 0);
   }
 
   if (nextEl.includes('min(')) {
-    var _def = __getOperatorValue(nextEl, segment);
+    var _def3 = __getOperatorValue(nextEl, segment);
 
     if (min(newObj) === 0) return 0;
-    return min(newObj) || (_def ? parseFloat(_def) : 0);
+    return min(newObj) || (_def3 ? parseFloat(_def3) : 0);
   }
 
   if (nextEl.includes('max(')) {
-    var _def2 = __getOperatorValue(nextEl, segment);
+    var _def4 = __getOperatorValue(nextEl, segment);
 
     if (max(newObj) === 0) return 0;
-    return max(newObj) || (_def2 ? parseFloat(_def2) : 0);
+    return max(newObj) || (_def4 ? parseFloat(_def4) : 0);
   }
 
   if (nextEl.includes('range(')) {
@@ -7207,10 +7284,10 @@ function __recursive() {
   }
 
   if (nextEl.includes('default(')) {
-    var _def3 = __getOperatorValue(nextEl, segment);
+    var _def5 = __getOperatorValue(nextEl, segment);
 
     if (newObj === 0) return 0;
-    return newObj || (isNaN(parseFloat(_def3)) ? cleanStringQuotes(_def3) : parseFloat(_def3));
+    return newObj || (isNaN(parseFloat(_def5)) ? cleanStringQuotes(_def5) : parseFloat(_def5));
   }
 }
 /**
@@ -7365,7 +7442,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60594" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63718" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
