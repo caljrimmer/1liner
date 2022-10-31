@@ -7102,6 +7102,7 @@ function __recursive() {
   var el = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
   var nextEl = arguments.length > 2 ? arguments[2] : undefined;
   var segment = arguments.length > 3 ? arguments[3] : undefined;
+  var source = arguments.length > 4 ? arguments[4] : undefined;
   if (!nextEl) return obj;
   var newObj = isArray(obj) ? obj : obj[el]; // Check element is array and next element is an operator
 
@@ -7184,78 +7185,104 @@ function __recursive() {
   if (nextEl.includes('date(') || nextEl.includes('age(')) {
     var def = __getOperatorValue(nextEl, segment);
 
-    var format = def;
+    var format = (def.split(',')[0] || '').trim();
+    var defined_date_path = (def.split(',')[1] || '').trim();
 
     if (!['YY', 'MM', 'DD', 'HH'].includes(format)) {
       throw new Error("Date error: in ".concat(segment, ") should be followed by eligible formatter i.e. YY, MM, DD, HH"));
     }
 
-    var date;
+    function __generateDate(date_str) {
+      function __checkDate(value) {
+        var date;
 
-    try {
-      date = new Date(newObj);
+        try {
+          date = new Date(value);
 
-      if (date instanceof Date && !isNaN(date)) {
-        date = new Date(newObj);
-      } else {
-        throw new Error("Date error: in ".concat(segment, ") the value is not a valid date"));
+          if (date instanceof Date && !isNaN(date)) {
+            date = new Date(value);
+          } else {
+            throw new Error("Date error: in ".concat(segment, ") the value is not a valid date"));
+          }
+        } catch (e) {
+          throw new Error("Date error: in ".concat(segment, ") the value is not a valid date"));
+        }
+
+        return date;
       }
-    } catch (e) {
-      throw new Error("Date error: in ".concat(segment, ") the value is not a valid date"));
+
+      var date = __checkDate(date_str);
+
+      var now;
+
+      if (defined_date_path) {
+        // This only works will parent keys (i.e. top-level)
+        var found_date = get(source, defined_date_path);
+        now = __checkDate(found_date);
+      } else {
+        now = new Date();
+      }
+
+      var result;
+
+      if (nextEl.includes('date(')) {
+        if (format === 'YY') {
+          result = date.getUTCFullYear();
+        } else if (format === 'MM') {
+          result = date.getUTCMonth() + 1;
+        } else if (format === 'DD') {
+          result = date.getUTCDate();
+        } else if (format === 'HH') {
+          result = date.getUTCHours();
+        } else {
+          result = 0;
+        }
+      } else {
+        var diff = now.getTime() - date.getTime();
+        var YY = Math.abs(new Date(diff).getUTCFullYear() - 1970);
+        var months = YY * 12;
+        var additional_month = new Date(now.getTime() - new Date(now.getUTCFullYear() + '-' + (date.getUTCMonth() + 1) + '-' + date.getUTCDate())).getUTCMonth();
+        var MM = months + additional_month;
+        var DD = Math.floor(diff / 1000 / (24 * 3600));
+        var HH = DD * 24;
+
+        if (format === 'DD') {
+          result = DD;
+        } else if (format === 'MM') {
+          result = MM;
+        } else if (format === 'YY') {
+          result = YY;
+        } else if (format === 'HH') {
+          result = HH;
+        } else {
+          result = 0;
+        }
+      }
+
+      return result;
     }
 
-    var result;
-
-    if (nextEl.includes('date(')) {
-      if (format === 'YY') {
-        result = date.getUTCFullYear();
-      } else if (format === 'MM') {
-        result = date.getUTCMonth() + 1;
-      } else if (format === 'DD') {
-        result = date.getUTCDate();
-      } else if (format === 'HH') {
-        result = date.getUTCHours();
-      } else {
-        result = 0;
-      }
+    if (isArray(newObj)) {
+      return newObj.map(function (n) {
+        return __generateDate(n);
+      });
     } else {
-      var now = new Date();
-      var diff = now.getTime() - date.getTime();
-      var YY = Math.abs(new Date(diff).getUTCFullYear() - 1970);
-      var months = YY * 12;
-      var additional_month = new Date(now.getTime() - new Date(now.getUTCFullYear() + '-' + (date.getUTCMonth() + 1) + '-' + date.getUTCDate())).getUTCMonth();
-      var MM = months + additional_month;
-      var DD = Math.floor(diff / 1000 / (24 * 3600));
-      var HH = DD * 24;
-
-      if (format === 'DD') {
-        result = DD;
-      } else if (format === 'MM') {
-        result = MM;
-      } else if (format === 'YY') {
-        result = YY;
-      } else if (format === 'HH') {
-        result = HH;
-      } else {
-        result = 0;
-      }
+      return __generateDate(newObj);
     }
-
-    return result;
   }
 
   if (nextEl.includes('regex(')) {
     var _def = __getOperatorValue(nextEl, segment);
 
-    var _result;
+    var result;
 
     try {
-      _result = newObj.match(_def);
+      result = newObj.match(_def);
     } catch (e) {
       throw new Error("Type error: in ".concat(segment, ") the value is not a string"));
     }
 
-    return _result && _result.length ? _result[0] : '';
+    return result && result.length ? result[0] : '';
   }
 
   if (nextEl.includes('mean(')) {
@@ -7345,6 +7372,8 @@ function () {
   }, {
     key: "singleQuery",
     value: function singleQuery(segment, amended_source) {
+      var _this3 = this;
+
       // Clone source object
       var result = _objectSpread({}, amended_source ? amended_source : this.source);
 
@@ -7359,7 +7388,7 @@ function () {
 
       elements.forEach(function (el, i) {
         var nextEl = elements[i + 1];
-        result = __recursive(result, el, nextEl, segment);
+        result = __recursive(result, el, nextEl, segment, _this3.source);
       });
       if (isUndefined(result)) throw new Error("Path error: No object path for ".concat(segment));
       return result;
@@ -7442,7 +7471,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "63718" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53021" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
